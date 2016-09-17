@@ -1,0 +1,28 @@
+
+[1mSPARQL Query[0m
+
+  SELECT ?a ?b ?c
+  WHERE {
+    ?a v:label "person" .
+    ?a e:knows ?b .
+    ?a e:created ?c .
+    ?b e:created ?c .
+    ?a v:age ?d .
+      FILTER (?d < 30)
+  }
+
+
+[1mTraversal (prior execution)[0m
+
+  [GraphStep([],vertex), MatchStep(AND,[[MatchStartStep(a), HasStep([~label.eq(person)]), MatchEndStep], [MatchStartStep(a), VertexStep(OUT,[knows],vertex), MatchEndStep(b)], [MatchStartStep(a), VertexStep(OUT,[created],vertex), MatchEndStep(c)], [MatchStartStep(b), VertexStep(OUT,[created],vertex), MatchEndStep(c)], [MatchStartStep(a), PropertiesStep([age],value), MatchEndStep(d)]]), WhereTraversalStep([WhereStartStep(d), IsStep(lt(30))]), SelectStep([a, b, c])]
+
+
+[1mResult[0m
+
+  {a=v[1], b=v[4], c=v[3]}
+
+
+[1mTraversal (after execution)[0m
+
+  [TinkerGraphStep(vertex,[~label.eq(person)])@[a], MatchStep(AND,[[MatchStartStep(a), VertexStep(OUT,[knows],vertex), MatchEndStep(b)], [MatchStartStep(a), VertexStep(OUT,[created],vertex), MatchEndStep(c)], [MatchStartStep(b), VertexStep(OUT,[created],vertex), MatchEndStep(c)], [MatchStartStep(a), PropertiesStep([age],value), MatchEndStep(d)], [MatchStartStep(d), WhereTraversalStep([WhereStartStep, IsStep(lt(30))]), MatchEndStep]]), SelectStep([a, b, c])]
+

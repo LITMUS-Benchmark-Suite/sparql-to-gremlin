@@ -1,0 +1,25 @@
+
+[1mSPARQL Query[0m
+
+  SELECT ?name
+  WHERE {
+      ?a v:name ?name .
+      FILTER NOT EXISTS { ?a v:age ?b }
+  }
+
+
+[1mTraversal (prior execution)[0m
+
+  [GraphStep([],vertex), MatchStep(AND,[[MatchStartStep(a), PropertiesStep([name],value), MatchEndStep(name)]]), WhereTraversalStep([NotStep(![WhereStartStep(a), PropertiesStep([age],value)])]), SelectOneStep(name)]
+
+
+[1mResult[0m
+
+  lop
+  ripple
+
+
+[1mTraversal (after execution)[0m
+
+  [TinkerGraphStep([],vertex), MatchStep(AND,[[MatchStartStep(a), PropertiesStep([name],value), MatchEndStep(name)], [MatchStartStep(a), WhereTraversalStep([NotStep(![WhereStartStep, PropertiesStep([age],property)])]), MatchEndStep]]), SelectOneStep(name)]
+

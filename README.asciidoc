@@ -1,8 +1,4 @@
-# sparql-to-gremlin
-An effort towards converting sparql queries to gremlin traversals/queries. In this work we aim to extend the work by Daniel Kuppitz [https://github.com/dkuppitz/sparql-gremlin]
-
-##The extentions are listed as follows:
-1. TBA
+We aim to extend the work by Daniel Kuppitz [https://github.com/dkuppitz/sparql-gremlin]
 
 SPARQL-Gremlin
 ==============

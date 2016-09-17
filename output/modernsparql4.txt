@@ -1,0 +1,28 @@
+
+[1mSPARQL Query[0m
+
+  SELECT ?name ?age
+  WHERE {
+      ?person v:name ?name .
+      ?person v:age ?age .
+      ?person e:created ?project .
+      ?project v:name "lop" .
+  }
+
+
+[1mTraversal (prior execution)[0m
+
+  [GraphStep([],vertex), MatchStep(AND,[[MatchStartStep(person), PropertiesStep([name],value), MatchEndStep(name)], [MatchStartStep(person), PropertiesStep([age],value), MatchEndStep(age)], [MatchStartStep(person), VertexStep(OUT,[created],vertex), MatchEndStep(project)], [MatchStartStep(project), PropertiesStep([name],value), IsStep(eq(lop)), MatchEndStep]]), SelectStep([name, age])]
+
+
+[1mResult[0m
+
+  {name=marko, age=29}
+  {name=josh, age=32}
+  {name=peter, age=35}
+
+
+[1mTraversal (after execution)[0m
+
+  [TinkerGraphStep([],vertex), MatchStep(AND,[[MatchStartStep(person), PropertiesStep([name],value), MatchEndStep(name)], [MatchStartStep(person), PropertiesStep([age],value), MatchEndStep(age)], [MatchStartStep(person), VertexStep(OUT,[created],vertex), MatchEndStep(project)], [MatchStartStep(project), PropertiesStep([name],value), IsStep(eq(lop)), MatchEndStep]]), SelectStep([name, age])]
+
