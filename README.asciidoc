@@ -1,4 +1,5 @@
-We aim to extend the work by Daniel Kuppitz [https://github.com/dkuppitz/sparql-gremlin]
+We aim to extend the work by Daniel Kuppitz [https://github.com/dkuppitz/sparql-gremlin]. For this we propose the following extentions in the functionalities of the existing queries:
+1. TBA
 
 SPARQL-Gremlin
 ==============
