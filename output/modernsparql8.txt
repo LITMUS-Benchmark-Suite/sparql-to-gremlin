@@ -1,12 +1,12 @@
 
 [1mSPARQL Query[0m
 
-	  SELECT ?name ?age
-	  WHERE {
-	      ?person v:name ?name .
-	      ?person v:age ?age .
-	      FILTER (?age > 30 && ?age < 40 || ?name = "marko")
-	  }
+  SELECT ?name ?age
+  WHERE {
+      ?person v:name ?name .
+      ?person v:age ?age .
+      FILTER (?age > 30 && ?age < 40 || ?name = "marko")
+  }
 
 
 [1mTraversal (prior execution)[0m

@@ -39,9 +39,6 @@ import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.__;
 
 import java.util.List;
 
-/**
- * @author Daniel Kuppitz (http://gremlin.guru)
- */
 class WhereTraversalBuilder {
 
     public static GraphTraversal<?, ?> transform(final E_Equals expression) {

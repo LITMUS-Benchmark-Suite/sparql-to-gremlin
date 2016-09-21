@@ -41,9 +41,6 @@ import java.io.StringReader;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-/**
- * @author Daniel Kuppitz (http://gremlin.guru)
- */
 class ConsoleCompiler {
 
     public static void main(final String[] args) throws IOException {

@@ -1,11 +1,11 @@
 
 [1mSPARQL Query[0m
 
-	  SELECT DISTINCT ?a ?b ?c
-	  WHERE {
-	      ?a e:created ?b .
-	      ?a v:name ?c .
-	  }
+  SELECT DISTINCT ?a ?b ?c
+  WHERE {
+      ?a e:created ?b .
+      ?a v:name ?c .
+  }
 
 
 [1mTraversal (prior execution)[0m
