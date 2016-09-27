@@ -106,8 +106,7 @@ class ConsoleCompiler {
 
         printWithHeadline("SPARQL Query", queryString);
         printWithHeadline("Traversal (prior execution)", traversal);
-        printWithHeadline("Result", String.join(System.lineSeparator(),
-                traversal.toStream().map(Object::toString).collect(Collectors.toList())));
+        printWithHeadline("Result", String.join(System.lineSeparator(),traversal.toStream().map(Object::toString).collect(Collectors.toList())));
         printWithHeadline("Traversal (after execution)", traversal);
     }
 
@@ -129,7 +128,7 @@ class ConsoleCompiler {
         final BufferedReader br = new BufferedReader(sr);
         String line;
         System.out.println();
-        System.out.println("\u001B[1m" + headline + "\u001B[0m"); //Not sure what this is :-/
+        System.out.println( headline ); //Not sure what this is :-/
         System.out.println();
         boolean skip = true;
         while (null != (line = br.readLine())) {

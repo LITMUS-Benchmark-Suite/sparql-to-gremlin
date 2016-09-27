@@ -34,10 +34,16 @@ class TraversalBuilder {
 
     public static GraphTraversal<?, ?> transform(final Triple triple) {
         final GraphTraversal<Vertex, ?> matchTraversal = __.as(triple.getSubject().getName());
+        
         final Node predicate = triple.getPredicate();
         final String uri = predicate.getURI();
         final String uriValue = Prefixes.getURIValue(uri);
         final String prefix = Prefixes.getPrefix(uri);
+        
+        System.out.println("uri: "+uri);
+        System.out.println("uriValue: "+uriValue);
+        System.out.println("prefix: "+prefix);
+        
         switch (prefix) {
             case "edge":
                 return matchTraversal.out(uriValue).as(triple.getObject().getName());
@@ -54,6 +60,7 @@ class TraversalBuilder {
                                                       final PropertyType type, final Node object) {
         switch (propertyName) {
             case "id":
+         
                 return object.isConcrete()
                         ? traversal.hasId(object.getLiteralValue())
                         : traversal.id().as(object.getName());
