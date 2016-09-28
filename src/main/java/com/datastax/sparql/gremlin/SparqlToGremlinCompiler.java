@@ -38,6 +38,7 @@ import org.apache.jena.sparql.algebra.op.OpOrder;
 import org.apache.jena.sparql.algebra.op.OpTopN;
 import org.apache.jena.sparql.algebra.op.OpUnion;
 import org.apache.tinkerpop.gremlin.process.traversal.Order;
+import org.apache.tinkerpop.gremlin.process.traversal.Scope;
 import org.apache.tinkerpop.gremlin.process.traversal.Traversal;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversal;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
@@ -47,6 +48,7 @@ import org.apache.tinkerpop.gremlin.structure.Vertex;
 
 import groovy.util.OrderBy;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -59,6 +61,7 @@ public class SparqlToGremlinCompiler extends OpVisitorBase
 
     private GraphTraversal<Vertex, ?> traversal;
     private Op bOP ;
+    private List<Traversal> travList = new ArrayList<Traversal>();
 
     private SparqlToGremlinCompiler(final GraphTraversal<Vertex, ?> traversal) 
     {
@@ -135,17 +138,19 @@ public class SparqlToGremlinCompiler extends OpVisitorBase
     //VISITING SPARQL ALGEBRA OP BASIC TRIPLE PATTERNS - MAYBE
     @Override
     public void visit(final OpBGP opBGP) {
-    	//if(!(bOP.toString().contains("union")))
+    	//
     	{
 	    	System.out.println("The opBGP Visit called ==========================================");
 	        final List<Triple> triples = opBGP.getPattern().getList();
 	        final Traversal[] matchTraversals = new Traversal[triples.size()];
 	        int i = 0;
 	        for (final Triple triple : triples) {
+	        	travList.add(TraversalBuilder.transform(triple));
 	            matchTraversals[i++] = TraversalBuilder.transform(triple);
 	            System.out.println("Triple: "+triple.toString());
 	            System.out.println("Graph Traversal: "+matchTraversals[i-1].toString());
 	        }
+	        if(!(bOP.toString().contains("union")))
 	        traversal = traversal.match(matchTraversals);
     	}
     }
@@ -164,64 +169,30 @@ public class SparqlToGremlinCompiler extends OpVisitorBase
     public void visit(final OpUnion opUnion)
     {
     	System.out.println("The OpUnion visit called===========================================");
-    	System.out.println("Traversal :"+traversal.toString());
-    	
-    //	traversal= traversal.as("UnionStep");
-//    	List<Traversal> traversals = (List<Traversal>) traversal.toList();
-//    	System.out.println("Total Size = "+traversals.size());
-//    	for(Traversal t: traversals)
-//    	{
-//    		System.out.println("The traversals: "+ t.toString());
-//    	}
-//    	//traversal = traversal.union(traversals.get(0));
+    	System.out.println("Traversal before Union:"+traversal.toString());	
 
-    	//traversal = traversal.union(traversal.)
-   /* 	OpBGP opBGP =(OpBGP) opUnion.getLeft();
-    	List<Triple> triples = opBGP.getPattern().getList();
-        Traversal[] matchTraversals = new Traversal[triples.size()];
-        int i = 0;
-        for (final Triple triple : triples) {
-            matchTraversals[i++] = TraversalBuilder.transform(triple);
-            System.out.println("Triple: "+triple.toString());
-            //System.out.println("Graph Traversal: "+matchTraversals[i-1].toString());
-        }
-        triples.clear();
-        opBGP =(OpBGP) opUnion.getRight();
-    	triples = opBGP.getPattern().getList();
-    	Traversal[] matchTraversals1 = new Traversal[triples.size()];
-       // final Traversal[] matchTraversals = new Traversal[triples.size()];
-         i = 0;
-        for (final Triple triple : triples) {
-            matchTraversals1[i++] = TraversalBuilder.transform(triple);
-            System.out.println("Triple: "+triple.toString());
-            //System.out.println("Graph Traversal: "+matchTraversals[i-1].toString());
-        }
-       // traversal.remove();
-       // traversal.asAdmin().reset();
-      //  traversal = traversal.match(matchTraversals);
-       // traversal = matchTraversals[0].
-      //  GraphTraversal<?, ?> templ = traversal.uni
-        traversal = traversal.match(matchTraversals);
-        traversal = traversal.union(matchTraversals1);*/
+    	Traversal[] matchTraversals = new Traversal[travList.size()];
+    	int i=0;
+    	for(Traversal tr: travList)
+    	{
+    		matchTraversals[i++] = tr;
+    	}
+        traversal = traversal.union(matchTraversals);
+      
+      //  __.union(matchTraversals,matchTraversals1);
     }
     
-    public void OnUnionCallThis(OpBGP left, OpBGP right)
-    {
-    	GraphTraversal<Vertex, ?> traversalL = traversal;
-    }
     @Override
     public void visit(final OpConditional opConditional)
     {
     
     	System.out.println("The Conditional Visit called ==========================================");
     	
-    	
-    	
     }
     
     public void visit(final OpTopN opTopN)
     {
-    	
+    	System.out.println("The opTopN Visit called ==========================================");
     }
     public void visit(final OpOrder opOrder)
     {
@@ -232,6 +203,8 @@ public class SparqlToGremlinCompiler extends OpVisitorBase
     		//traversal = traversal.order().by(sc.expression.toString(),Order.decr);sc.toString().substring(sc.toString().indexOf("C(")+2,sc.toString().length()-2)
     		//traversal = traversal.order().by(Order.incr);
     	}
+    	System.out.println("Traversal : "+traversal.toString());
+    	traversal = traversal.order(Scope.global);
     }
     public void visit(final OpLeftJoin opLeftJoin)
     {
