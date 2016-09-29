@@ -1,11 +1,17 @@
-# sparql-to-gremlin
+image::https://raw.githubusercontent.com/dkuppitz/sparql-gremlin/master/docs/images/sparql-gremlin-logo.png[SPARQL-Gremlin]
+Sparql-to-Gremlin
+=====================
+
 An effort towards converting sparql queries to gremlin traversals/queries. In this work we aim to extend the work by Daniel Kuppitz [https://github.com/dkuppitz/sparql-gremlin]
 
 ##The extentions are listed as follows:
-1. TBA
+1. adding support for Union queries [Done]
+2. adding support for Order-By queries [Partial build]
+3. adding support for ASK queries [Pending]
+4. Support translation for QALD 6 dataset (SPARQL queries over DBpedia) [TBA]
+5. Support translation for Northwind dataset [TBA]
 
-image::https://raw.githubusercontent.com/dkuppitz/sparql-gremlin/master/docs/images/sparql-gremlin-logo.png[SPARQL-Gremlin]
-
+Note: The work is currently under progress
 
 SPARQL-Gremlin is a compiler used to transform SPARQL queries into Gremlin traversals. It is based on the https://jena.apache.org/index.html[Apache Jena] SPARQL processor https://jena.apache.org/documentation/query/index.html[ARQ], which provides access to a syntax tree of a SPARQL query.
 
