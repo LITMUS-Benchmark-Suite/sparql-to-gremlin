@@ -200,11 +200,12 @@ public class SparqlToGremlinCompiler extends OpVisitorBase
     	for(SortCondition sc: opOrder.getConditions())
     	{
     		System.out.println("Conditions: "+sc.toString()+"\nExpr = "+sc.getExpression());
+    		//traversal = traversal.order().by(sc.getExpression().toString(), Order.decr);
     		//traversal = traversal.order().by(sc.expression.toString(),Order.decr);sc.toString().substring(sc.toString().indexOf("C(")+2,sc.toString().length()-2)
     		//traversal = traversal.order().by(Order.incr);
     	}
-    	System.out.println("Traversal : "+traversal.toString());
-    	traversal = traversal.order(Scope.global);
+    	//System.out.println("Traversal : "+traversal.toString());
+    	
     }
     public void visit(final OpLeftJoin opLeftJoin)
     {
