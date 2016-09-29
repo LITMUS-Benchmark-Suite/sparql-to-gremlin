@@ -4,8 +4,8 @@ An effort towards converting sparql queries to gremlin traversals/queries. In th
 ##The extentions are listed as follows:
 1. TBA
 
-SPARQL-Gremlin
-==============
+image::https://raw.githubusercontent.com/dkuppitz/sparql-gremlin/master/docs/images/sparql-gremlin-logo.png[SPARQL-Gremlin]
+
 
 SPARQL-Gremlin is a compiler used to transform SPARQL queries into Gremlin traversals. It is based on the https://jena.apache.org/index.html[Apache Jena] SPARQL processor https://jena.apache.org/documentation/query/index.html[ARQ], which provides access to a syntax tree of a SPARQL query.
 
