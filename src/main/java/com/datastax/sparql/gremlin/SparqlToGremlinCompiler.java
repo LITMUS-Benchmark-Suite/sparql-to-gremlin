@@ -52,9 +52,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-/**
- * @author Daniel Kuppitz (http://gremlin.guru)
- */
+
 // TODO: implement OpVisitor, don't extend OpVisitorBase
 public class SparqlToGremlinCompiler extends OpVisitorBase 
 {
@@ -78,7 +76,10 @@ public class SparqlToGremlinCompiler extends OpVisitorBase
     {
         final Op op = Algebra.compile(query); //SPARQL query compiles here to OP
         System.out.println("OP Tree: "+op.toString());
+<<<<<<< HEAD
         bOP = op;
+=======
+>>>>>>> 923f990b32adea8014cd3b972acbeeace044656f
         OpWalker.walk(op, this); //OP is being walked here
         if (!query.isQueryResultStar()) 
         {

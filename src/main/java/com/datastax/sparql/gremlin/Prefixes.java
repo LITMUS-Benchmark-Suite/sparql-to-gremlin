@@ -22,9 +22,7 @@ package com.datastax.sparql.gremlin;
 import java.util.Arrays;
 import java.util.List;
 
-/**
- * @author Daniel Kuppitz (http://gremlin.guru)
- */
+
 public class Prefixes {
 
     public final static String BASE_URI = "http://www.tinkerpop.com/traversal/";
