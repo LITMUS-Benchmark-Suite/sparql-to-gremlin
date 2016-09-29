@@ -2,13 +2,19 @@
 An effort towards converting sparql queries to gremlin traversals/queries. In this work we aim to extend the work by Daniel Kuppitz [https://github.com/dkuppitz/sparql-gremlin]
 
 ##The extentions are listed as follows:
+
 1. adding support for Union queries [Done]
+
 2. adding support for Order-By queries [Partial build]
+
 3. adding support for ASK queries [Pending]
+
 4. Support translation for QALD 6 dataset (SPARQL queries over DBpedia) [TBA]
+
 5. Support translation for Northwind dataset [TBA]
 
 Note: The work is currently under progress
+
 
 image::https://raw.githubusercontent.com/dkuppitz/sparql-gremlin/master/docs/images/sparql-gremlin-logo.png[SPARQL-Gremlin]
 
