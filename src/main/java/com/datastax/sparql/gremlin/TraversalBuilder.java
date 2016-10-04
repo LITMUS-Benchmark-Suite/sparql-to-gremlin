@@ -36,17 +36,16 @@ class TraversalBuilder {
         final String uri = predicate.getURI();
         final String uriValue = Prefixes.getURIValue(uri);
         final String prefix = Prefixes.getPrefix(uri);
-<<<<<<< HEAD
-        
-        System.out.println("uri: "+uri);
-        System.out.println("uriValue: "+uriValue);
-        System.out.println("prefix: "+prefix);
-        
-=======
-        System.out.println("uri: "+uri);
-        System.out.println("uriValue: "+uriValue);
-        System.out.println("prefix: "+prefix);
->>>>>>> 923f990b32adea8014cd3b972acbeeace044656f
+
+//        System.out.println("uri: "+uri);
+//        System.out.println("uriValue: "+uriValue);
+//        System.out.println("prefix: "+prefix);
+//        
+//
+//        System.out.println("uri: "+uri);
+//        System.out.println("uriValue: "+uriValue);
+//        System.out.println("prefix: "+prefix);
+
         switch (prefix) {
             case "edge":
                 return matchTraversal.out(uriValue).as(triple.getObject().getName());

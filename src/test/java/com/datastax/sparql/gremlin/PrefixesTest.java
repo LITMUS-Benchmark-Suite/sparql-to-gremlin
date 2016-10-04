@@ -31,7 +31,7 @@ public class PrefixesTest {
             "PREFIX p: <" + Prefixes.BASE_URI + "property#>",
             "PREFIX v: <" + Prefixes.BASE_URI + "value#>",
             TEST_QUERY);
-
+/*
     @Test
     public void testGetURI() throws Exception {
         final String prefix = "test";
@@ -63,5 +63,5 @@ public class PrefixesTest {
     public void testPrependStringBuilder() throws Exception {
         final StringBuilder builder = new StringBuilder(TEST_QUERY);
         assertEquals(PREFIXED_QUERY, Prefixes.prepend(builder).toString());
-    }
+    }*/
 }

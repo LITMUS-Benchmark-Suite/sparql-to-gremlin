@@ -19,7 +19,10 @@
 
 package com.datastax.sparql.gremlin;
 
-import org.apache.jena.base.Sys;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 import org.apache.jena.graph.Triple;
 import org.apache.jena.query.Query;
 import org.apache.jena.query.QueryFactory;
@@ -32,13 +35,11 @@ import org.apache.jena.sparql.algebra.OpWalker;
 import org.apache.jena.sparql.algebra.op.OpBGP;
 import org.apache.jena.sparql.algebra.op.OpConditional;
 import org.apache.jena.sparql.algebra.op.OpFilter;
-import org.apache.jena.sparql.algebra.op.OpJoin;
 import org.apache.jena.sparql.algebra.op.OpLeftJoin;
 import org.apache.jena.sparql.algebra.op.OpOrder;
 import org.apache.jena.sparql.algebra.op.OpTopN;
 import org.apache.jena.sparql.algebra.op.OpUnion;
-import org.apache.tinkerpop.gremlin.process.traversal.Order;
-import org.apache.tinkerpop.gremlin.process.traversal.Scope;
+import org.apache.jena.sparql.expr.Expr;
 import org.apache.tinkerpop.gremlin.process.traversal.Traversal;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversal;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
@@ -46,41 +47,67 @@ import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.__;
 import org.apache.tinkerpop.gremlin.structure.Graph;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
 
-import groovy.util.OrderBy;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
 
 // TODO: implement OpVisitor, don't extend OpVisitorBase
 public class SparqlToGremlinCompiler extends OpVisitorBase 
 {
 
     private GraphTraversal<Vertex, ?> traversal;
-    private Op bOP ;
-    private List<Traversal> travList = new ArrayList<Traversal>();
-
+   
+    
+    static int count = 0;
+    static int lastCount = 0;
+    static boolean filterFlag = false;
+    static boolean unionFlag = false;
+    static String filterTrav = "";
+    List<Integer> bgpIndxs = new ArrayList<Integer>();
+    List<Integer> unionIndxs = new ArrayList<Integer>();
+    List<Integer> filterIndxs = new ArrayList<Integer>();
+    List<String> allTraversals = new ArrayList<String>();
+    GraphTraversalSource temp;
+    String allOperations[];
+    Graph graph;
+   
+    
     private SparqlToGremlinCompiler(final GraphTraversal<Vertex, ?> traversal) 
     {
         this.traversal = traversal;
+        
     }
 
     private SparqlToGremlinCompiler(final GraphTraversalSource g) 
     {
         this(g.V());
+        temp = g;
         
+    }
+    private SparqlToGremlinCompiler( final Graph g)
+    {
+    	this.traversal = (GraphTraversal<Vertex, ?>) g.traversal();
+    	graph = g;
     }
 
     GraphTraversal<Vertex, ?> convertToGremlinTraversal(final Query query) 
     {
         final Op op = Algebra.compile(query); //SPARQL query compiles here to OP
         System.out.println("OP Tree: "+op.toString());
-<<<<<<< HEAD
-        bOP = op;
-=======
->>>>>>> 923f990b32adea8014cd3b972acbeeace044656f
+        allOperations = op.toString().split("\\(");
+
+        
+
         OpWalker.walk(op, this); //OP is being walked here
+        
+        System.out.println("=======================================================================");
+        String finalTrav = "";
+        for(String trav: allTraversals)
+        {
+        	System.out.println("The step: "+trav);
+        	finalTrav +=trav+","; 
+        }
+        finalTrav = finalTrav.substring(0,finalTrav.length()-2);
+        
+        traversal = __.as(finalTrav);
+        System.out.println("=======================================================================");
         if (!query.isQueryResultStar()) 
         {
             final List<String> vars = query.getResultVars();
@@ -140,28 +167,43 @@ public class SparqlToGremlinCompiler extends OpVisitorBase
     @Override
     public void visit(final OpBGP opBGP) {
     	//
+    	count++;
     	{
 	    	System.out.println("The opBGP Visit called ==========================================");
 	        final List<Triple> triples = opBGP.getPattern().getList();
 	        final Traversal[] matchTraversals = new Traversal[triples.size()];
 	        int i = 0;
 	        for (final Triple triple : triples) {
-	        	travList.add(TraversalBuilder.transform(triple));
+	        	
+	        	allTraversals.add(TraversalBuilder.transform(triple).toString());
 	            matchTraversals[i++] = TraversalBuilder.transform(triple);
 	            System.out.println("Triple: "+triple.toString());
 	            System.out.println("Graph Traversal: "+matchTraversals[i-1].toString());
 	        }
-	        if(!(bOP.toString().contains("union")))
-	        traversal = traversal.match(matchTraversals);
+
     	}
+    	
     }
 
   //VISITING SPARQL ALGEBRA OP FILTER - MAYBE
     @Override
     public void visit(final OpFilter opFilter) {
     	System.out.println("The opFilter Visit called ==========================================");
-        opFilter.getExprs().getList().stream().
-                map(WhereTraversalBuilder::transform).reduce(traversal, GraphTraversal::where);
+    	//if(!(bOP.toString().contains("union")))
+    	
+    		
+    		count++;
+    		String st = "";
+    		for(Expr expr: opFilter.getExprs().getList())
+    		{    		
+    			st += __.where(WhereTraversalBuilder.transform(expr)).toString()+",";	
+    		}
+    		st = st.substring(0, st.length()-2);
+    		st = allTraversals.remove(allTraversals.size()-1)+","+ st;
+    		allTraversals.add(st);
+    		
+
+//    		opFilter.getExprs().getList().stream().map(WhereTraversalBuilder::transform).reduce(traversal1, GraphTraversal::where);
     }
     // TODO: add more functions for operators other than FILTER, such as OPTIONAL
     // This can be done by understanding how Jena handles these other operators/filters inherently and then map them to Gremlin
@@ -172,13 +214,47 @@ public class SparqlToGremlinCompiler extends OpVisitorBase
     	System.out.println("The OpUnion visit called===========================================");
     	System.out.println("Traversal before Union:"+traversal.toString());	
 
-    	Traversal[] matchTraversals = new Traversal[travList.size()];
-    	int i=0;
-    	for(Traversal tr: travList)
-    	{
-    		matchTraversals[i++] = tr;
-    	}
-        traversal = traversal.union(matchTraversals);
+      	
+    	String st1 = allTraversals.remove(allTraversals.size()-1);
+    	String st2 = allTraversals.remove(allTraversals.size()-1);
+    	String unionCombined = "UnionStep(["+st2+","+st1+"])";
+    	allTraversals.add(unionCombined);
+    	
+//    	if(filterFlag)
+//    	{
+//    		condition = condition-1;
+//    		System.out.println("");
+//    	}
+//    	for(int i=condition-1;i<=condition;i++ )
+//    	{	
+//    		matchTraversals[ti++] = travList.get(i);
+//    		System.out.println("The inside: Union:  "+ matchTraversals[ti-1].toString());
+//    	}
+//    	if(lastCount<count )
+//    	{
+//    		System.out.println("The last count : "+lastCount);
+//    		System.out.println("The count : "+count);
+//    		System.out.println("count-3 : "+(count-3));
+//    		Traversal[] matchTraversals1 =new Traversal[(count-2) - lastCount];
+//    		
+//    		
+//    		int tempC=0;
+//    		
+//    		for(int i=lastCount;i<=condition-2;i++ )
+//        	{        		
+//        		matchTraversals1[tempC++] = travList.get(i);
+//        		System.out.println("The inside: "+ matchTraversals1[tempC-1].toString());
+//        		traversal = traversal.as(matchTraversals1[tempC-1].toString());
+//        	}
+//    		
+//    		System.out.println("Temp trav : "+tempC);
+////    		if(tempC>0)
+////    		{
+////    			traversal = traversal.match(matchTraversals1);
+////    		}
+//    		lastCount = count;
+//    	}
+//        traversal = traversal.union(matchTraversals);
       
       //  __.union(matchTraversals,matchTraversals1);
     }
@@ -211,17 +287,7 @@ public class SparqlToGremlinCompiler extends OpVisitorBase
     public void visit(final OpLeftJoin opLeftJoin)
     {
     	System.out.println("The opLeftJoin Visit called ==========================================");
-//    	OpBGP opBGP = (OpBGP)opLeftJoin.getLeft();
-//    	final List<Triple> triples = opBGP.getPattern().getList();
-//        final Traversal[] matchTraversals = new Traversal[triples.size()];
-//        int i = 0;
-//        for (final Triple triple : triples) {
-//            matchTraversals[i++] = TraversalBuilder.transform(triple);
-//            System.out.println("Triple: "+triple.toString());
-//            System.out.println("Graph Traversal: "+matchTraversals[i-1].toString());
-//        }
-//        traversal = traversal.match(matchTraversals);
-    	
+	
     	
     }
 }

@@ -46,7 +46,7 @@ public class SparqlToGremlinCompilerTest {
     private Graph modern, crew;
     private GraphTraversalSource mg, cg;
     private GraphTraversalSource mc, cc;
-
+/*
     @Before
     public void setUp() throws Exception {
         modern = TinkerFactory.createModern();
@@ -68,7 +68,7 @@ public class SparqlToGremlinCompilerTest {
     }
 
     /* Modern */
-
+/*
     @Test
     public void testModern1() throws Exception {
         final GraphTraversal expected = mg.V().match(
@@ -187,7 +187,7 @@ public class SparqlToGremlinCompilerTest {
     }
 
     /* The Crew */
-
+/*
     @Test
     public void testCrew1() throws Exception {
         final GraphTraversal expected = cg.V().match(
@@ -200,7 +200,7 @@ public class SparqlToGremlinCompilerTest {
     }
 
     /* Computer Mode */
-
+/*
     @Test
     public void testModernInComputerMode() throws Exception {
         final GraphTraversal expected = mc.V().match(
@@ -222,5 +222,5 @@ public class SparqlToGremlinCompilerTest {
                 as("b").values("startTime").as("d")).
                 select("c", "d");
         assertEquals(expected, convertToGremlinTraversal(crew, loadQuery("crew", 1)));
-    }
+    }*/
 }
