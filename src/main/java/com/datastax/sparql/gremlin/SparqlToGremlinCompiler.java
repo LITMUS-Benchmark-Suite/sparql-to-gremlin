@@ -40,10 +40,14 @@ import org.apache.jena.sparql.algebra.op.OpOrder;
 import org.apache.jena.sparql.algebra.op.OpTopN;
 import org.apache.jena.sparql.algebra.op.OpUnion;
 import org.apache.jena.sparql.expr.Expr;
+import org.apache.jena.sparql.expr.ExprAggregator;
+import org.apache.tinkerpop.gremlin.process.traversal.Order;
+import org.apache.tinkerpop.gremlin.process.traversal.Step;
 import org.apache.tinkerpop.gremlin.process.traversal.Traversal;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversal;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.__;
+import org.apache.tinkerpop.gremlin.process.traversal.step.map.GraphStep;
 import org.apache.tinkerpop.gremlin.structure.Graph;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
 
@@ -64,6 +68,7 @@ public class SparqlToGremlinCompiler extends OpVisitorBase
     List<Integer> unionIndxs = new ArrayList<Integer>();
     List<Integer> filterIndxs = new ArrayList<Integer>();
     List<String> allTraversals = new ArrayList<String>();
+    List<Traversal> tLst = new ArrayList<Traversal>();
     GraphTraversalSource temp;
     String allOperations[];
     Graph graph;
@@ -87,6 +92,19 @@ public class SparqlToGremlinCompiler extends OpVisitorBase
     	graph = g;
     }
 
+    
+    public String createMatchStep(String step)
+    {
+    	String st = "";
+    	step = step.substring(1,step.length()-2);
+    	String first = step.substring(0,step.indexOf(","));
+    	String second = step.substring(step.indexOf(",")+1);
+    	System.out.println("First : "+first);
+    	System.out.println("Second : "+second);
+    	st = first.substring(first.indexOf("["), first.length()-1);
+    	st ="["+st+","+second+"]";
+    	return st;
+    }
     GraphTraversal<Vertex, ?> convertToGremlinTraversal(final Query query) 
     {
         final Op op = Algebra.compile(query); //SPARQL query compiles here to OP
@@ -99,18 +117,54 @@ public class SparqlToGremlinCompiler extends OpVisitorBase
         
         System.out.println("=======================================================================");
         String finalTrav = "";
-        for(String trav: allTraversals)
+        int t = 0;
+        
+        Traversal allTr[] = new Traversal[tLst.size()];
+        for(Traversal tempTrav: tLst)
+        {
+        	allTr[t++]=tempTrav;
+        	//traversal.asAdmin().sideEffect(tempTrav);
+        	//traversal.as(tempTrav.toString());
+        	//traversal.and(tempTrav);
+        	//traversal.map(tempTrav);
+        	//traversal.by(tempTrav);
+        	//traversal.match(tempTrav);
+        	//traversal.
+        	System.out.println("The Traversal : "+traversal.toString());
+        }
+        if(tLst.size()>0)
+        traversal = traversal.match(allTr);
+      //  traversal = traversal.order().by(Order.decr);
+       /* for(String trav: allTraversals)
         {
         	System.out.println("The step: "+trav);
-        	finalTrav +=trav+","; 
-        }
-        finalTrav = finalTrav.substring(0,finalTrav.length()-2);
+        	finalTrav +=trav+",";
+        	//trav = trav.replace("StartStep@", "");
+        //	traversal = traversal.as(trav);
+        	//__.propertyMap(trav);
+        	//traversal = traversal.match(tLst.get(t++));
+        	//traversal = traversal.valueMap(trav);
+        	//traversal = traversal.properties(trav);
+        	//trav = this.createMatchStep(trav);
+        	//traversal = traversal.asAdmin().to(trav);
+        	traversal = traversal.as(trav);
+        	// traversal = traversal.match(__.as(trav));
+        }*/
+      //  finalTrav = finalTrav.substring(0,finalTrav.length()-2);
         
-        traversal = __.as(finalTrav);
+        //traversal = traversal.match(__.as(finalTrav));
         System.out.println("=======================================================================");
         if (!query.isQueryResultStar()) 
         {
+    
             final List<String> vars = query.getResultVars();
+            List<ExprAggregator> lstexpr = query.getAggregators();
+            
+            for(ExprAggregator expr: lstexpr)
+            {
+            	System.out.println("The aggr : "+expr.toString());
+            }
+            
             System.out.println("Variable vars = "+vars.toString()); //printing the name of variables -- test code
             switch (vars.size()) 
             {
@@ -177,6 +231,7 @@ public class SparqlToGremlinCompiler extends OpVisitorBase
 	        	
 	        	allTraversals.add(TraversalBuilder.transform(triple).toString());
 	            matchTraversals[i++] = TraversalBuilder.transform(triple);
+	            tLst.add(matchTraversals[i-1]);
 	            System.out.println("Triple: "+triple.toString());
 	            System.out.println("Graph Traversal: "+matchTraversals[i-1].toString());
 	        }
@@ -191,13 +246,15 @@ public class SparqlToGremlinCompiler extends OpVisitorBase
     	System.out.println("The opFilter Visit called ==========================================");
     	//if(!(bOP.toString().contains("union")))
     	
-    		
+    		Traversal trav=null;
     		count++;
     		String st = "";
     		for(Expr expr: opFilter.getExprs().getList())
     		{    		
+    			trav = ((GraphTraversal<Vertex, ?>)tLst.remove(tLst.size()-1)).where(WhereTraversalBuilder.transform(expr));
     			st += __.where(WhereTraversalBuilder.transform(expr)).toString()+",";	
     		}
+    		tLst.add(trav);
     		st = st.substring(0, st.length()-2);
     		st = allTraversals.remove(allTraversals.size()-1)+","+ st;
     		allTraversals.add(st);
@@ -217,6 +274,20 @@ public class SparqlToGremlinCompiler extends OpVisitorBase
       	
     	String st1 = allTraversals.remove(allTraversals.size()-1);
     	String st2 = allTraversals.remove(allTraversals.size()-1);
+    	
+    	Traversal unionTemp[] = new Traversal[2];
+    	
+    	unionTemp[1]= tLst.remove(tLst.size()-1);
+    	unionTemp[0]= tLst.remove(tLst.size()-1);
+    	
+    	for(Traversal temp: tLst)
+    	{
+    		traversal = traversal.match(temp);
+    	}
+    	
+    	traversal = (GraphTraversal<Vertex, ?>)traversal.union(unionTemp);
+    //	tLst.add(__.union(unionTemp));
+    	tLst.clear();
     	String unionCombined = "UnionStep(["+st2+","+st1+"])";
     	allTraversals.add(unionCombined);
     	

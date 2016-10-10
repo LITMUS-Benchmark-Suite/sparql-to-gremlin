@@ -100,9 +100,11 @@ class ConsoleCompiler {
         }
 
         final Traversal<Vertex, ?> traversal = SparqlToGremlinCompiler.convertToGremlinTraversal(graph, queryString);
-
+        
+        
         printWithHeadline("SPARQL Query", queryString);
         printWithHeadline("Traversal (prior execution)", traversal);
+        
         printWithHeadline("Result", String.join(System.lineSeparator(),traversal.toStream().map(Object::toString).collect(Collectors.toList())));
         printWithHeadline("Traversal (after execution)", traversal);
     }
