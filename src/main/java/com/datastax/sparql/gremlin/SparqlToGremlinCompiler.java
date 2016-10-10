@@ -134,25 +134,7 @@ public class SparqlToGremlinCompiler extends OpVisitorBase
         }
         if(tLst.size()>0)
         traversal = traversal.match(allTr);
-      //  traversal = traversal.order().by(Order.decr);
-       /* for(String trav: allTraversals)
-        {
-        	System.out.println("The step: "+trav);
-        	finalTrav +=trav+",";
-        	//trav = trav.replace("StartStep@", "");
-        //	traversal = traversal.as(trav);
-        	//__.propertyMap(trav);
-        	//traversal = traversal.match(tLst.get(t++));
-        	//traversal = traversal.valueMap(trav);
-        	//traversal = traversal.properties(trav);
-        	//trav = this.createMatchStep(trav);
-        	//traversal = traversal.asAdmin().to(trav);
-        	traversal = traversal.as(trav);
-        	// traversal = traversal.match(__.as(trav));
-        }*/
-      //  finalTrav = finalTrav.substring(0,finalTrav.length()-2);
-        
-        //traversal = traversal.match(__.as(finalTrav));
+     
         System.out.println("=======================================================================");
         if (!query.isQueryResultStar()) 
         {
