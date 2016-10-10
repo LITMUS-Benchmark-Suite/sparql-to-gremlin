@@ -1,5 +1,5 @@
 
-An effort towards converting sparql queries to gremlin traversals/queries. In this work we aim to extend the work by Daniel Kuppitz [https://github.com/dkuppitz/sparql-gremlin]
+An effort towards converting sparql queries to gremlin traversals/queries. In this work we started with an aim to extend the work by Daniel Kuppitz [https://github.com/dkuppitz/sparql-gremlin]; However, towards the end we landed up modifying the core and built it from almost scratch! But we like to give due credits for getting us started :)
 
 ##The extentions are listed as follows:
 
