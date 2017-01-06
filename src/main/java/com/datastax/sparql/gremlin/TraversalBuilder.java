@@ -37,9 +37,9 @@ class TraversalBuilder {
         final String uriValue = Prefixes.getURIValue(uri);
         final String prefix = Prefixes.getPrefix(uri);
 
-//        System.out.println("uri: "+uri);
-//        System.out.println("uriValue: "+uriValue);
-//        System.out.println("prefix: "+prefix);
+        System.out.println("uri: "+uri);
+        System.out.println("uriValue: "+uriValue);
+        System.out.println("prefix: "+prefix);
 //        
 //
 //        System.out.println("uri: "+uri);

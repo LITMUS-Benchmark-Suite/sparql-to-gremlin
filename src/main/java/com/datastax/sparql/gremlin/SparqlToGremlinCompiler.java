@@ -21,6 +21,8 @@ package com.datastax.sparql.gremlin;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Map;
+import java.util.HashMap;
 import java.util.List;
 
 import org.apache.jena.graph.Triple;
@@ -35,10 +37,13 @@ import org.apache.jena.sparql.algebra.OpWalker;
 import org.apache.jena.sparql.algebra.op.OpBGP;
 import org.apache.jena.sparql.algebra.op.OpConditional;
 import org.apache.jena.sparql.algebra.op.OpFilter;
+import org.apache.jena.sparql.algebra.op.OpGroup;
 import org.apache.jena.sparql.algebra.op.OpLeftJoin;
 import org.apache.jena.sparql.algebra.op.OpOrder;
 import org.apache.jena.sparql.algebra.op.OpTopN;
 import org.apache.jena.sparql.algebra.op.OpUnion;
+import org.apache.jena.sparql.core.Var;
+import org.apache.jena.sparql.core.VarExprList;
 import org.apache.jena.sparql.expr.Expr;
 import org.apache.jena.sparql.expr.ExprAggregator;
 import org.apache.tinkerpop.gremlin.process.traversal.Order;
@@ -77,7 +82,8 @@ public class SparqlToGremlinCompiler extends OpVisitorBase
     private SparqlToGremlinCompiler(final GraphTraversal<Vertex, ?> traversal) 
     {
         this.traversal = traversal;
-        
+        Exception e;
+     //   e.printStackTrace();
     }
 
     private SparqlToGremlinCompiler(final GraphTraversalSource g) 
@@ -138,13 +144,19 @@ public class SparqlToGremlinCompiler extends OpVisitorBase
         System.out.println("=======================================================================");
         if (!query.isQueryResultStar()) 
         {
-    
+        	
+        	
             final List<String> vars = query.getResultVars();
             List<ExprAggregator> lstexpr = query.getAggregators();
             
             for(ExprAggregator expr: lstexpr)
             {
             	System.out.println("The aggr : "+expr.toString());
+            	if(expr.toString().contains("SAMPLE"))
+            	{
+            		String str[] = expr.toString().split(" ");
+          
+            	}
             }
             
             System.out.println("Variable vars = "+vars.toString()); //printing the name of variables -- test code
@@ -184,6 +196,8 @@ public class SparqlToGremlinCompiler extends OpVisitorBase
 	                traversal = traversal.dedup();
 	            }
 	        }
+       
+       // traversal = traversal.count();
 	        return traversal;
     }
 
@@ -335,6 +349,26 @@ public class SparqlToGremlinCompiler extends OpVisitorBase
     		//traversal = traversal.order().by(Order.incr);
     	}
     	//System.out.println("Traversal : "+traversal.toString());
+    	
+    }
+ 
+    public void visit(final OpGroup opGroup)
+    {
+    	System.out.println("The opGroup Visit called ==========================================");
+    	 List<Var> lstVar = opGroup.getGroupVars().getVars();
+         
+         for(Var var: lstVar)
+         {
+         	System.out.println("The Var : "+var.toString());
+         	tLst.add(__.group().by(var.getName()));
+         	
+//         	if(expr.toString().contains("SAMPLE"))
+//         	{
+//         		String str[] = expr.toString().split(" ");
+//         		
+//         	}
+         }
+    
     	
     }
     public void visit(final OpLeftJoin opLeftJoin)

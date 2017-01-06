@@ -33,6 +33,7 @@ import org.apache.tinkerpop.gremlin.tinkergraph.structure.TinkerFactory;
 import org.apache.tinkerpop.gremlin.tinkergraph.structure.TinkerGraph;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -96,6 +97,7 @@ class ConsoleCompiler {
                     break;
             }
         } else {
+ 
             graph = TinkerFactory.createModern();
         }
 
