@@ -45,8 +45,7 @@ import java.util.stream.Collectors;
 class ConsoleCompiler {
 
     public static void main(final String[] args) throws IOException {
-    	////args = "/examples/modern1.sparql";
-    	
+    	//args = "/examples/modern1.sparql";
         final Options options = new Options();
         options.addOption("f", "file", true, "a file that contains a SPARQL query");
         options.addOption("g", "graph", true, "the graph that's used to execute the query [classic|modern|crew|kryo file]");

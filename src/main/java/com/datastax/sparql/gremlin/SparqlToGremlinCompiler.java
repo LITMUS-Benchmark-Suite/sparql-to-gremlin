@@ -40,6 +40,7 @@ import org.apache.jena.sparql.algebra.op.OpFilter;
 import org.apache.jena.sparql.algebra.op.OpGroup;
 import org.apache.jena.sparql.algebra.op.OpLeftJoin;
 import org.apache.jena.sparql.algebra.op.OpOrder;
+import org.apache.jena.sparql.algebra.op.OpSlice;
 import org.apache.jena.sparql.algebra.op.OpTopN;
 import org.apache.jena.sparql.algebra.op.OpUnion;
 import org.apache.jena.sparql.core.Var;
@@ -53,8 +54,13 @@ import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversal;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.__;
 import org.apache.tinkerpop.gremlin.process.traversal.step.map.GraphStep;
+import org.apache.tinkerpop.gremlin.process.traversal.step.map.OrderGlobalStep;
+import org.apache.tinkerpop.gremlin.process.traversal.step.map.OrderGlobalStep.OrderBiOperator;
 import org.apache.tinkerpop.gremlin.structure.Graph;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
+import org.codehaus.groovy.transform.TimedInterruptibleASTTransformation;
+import static org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.__.*;
+import groovy.util.OrderBy;
 
 
 // TODO: implement OpVisitor, don't extend OpVisitorBase
@@ -74,6 +80,15 @@ public class SparqlToGremlinCompiler extends OpVisitorBase
     List<Integer> filterIndxs = new ArrayList<Integer>();
     List<String> allTraversals = new ArrayList<String>();
     List<Traversal> tLst = new ArrayList<Traversal>();
+    OrderGlobalStep<String, Comparable> ord;
+    boolean limitflg=false,orderFlg=false,groupFlag = false;
+    String grpVar = "";
+    int sortDirec = 0;
+    long offsetLimit = 0;
+    long pagingoffset = 1;
+    int cntLimit = 0;
+    String sortvar = "";
+    
     GraphTraversalSource temp;
     String allOperations[];
     Graph graph;
@@ -141,6 +156,22 @@ public class SparqlToGremlinCompiler extends OpVisitorBase
         if(tLst.size()>0)
         traversal = traversal.match(allTr);
      
+        if(orderFlg)
+        {
+        	//Order ord = new OrderGlobalStep<String, >
+        	//graph.traversal().V(ids).has(T.label, vertexLabel).order().by(inE(inELabel).count(), Order.incr);
+        	traversal = traversal.order().by(sortvar,Order.incr);	       	
+        }
+        
+        if(limitflg)
+        	traversal = traversal.limit(offsetLimit);
+        //traversal.by(OrderGlobalStep);
+        
+        if(groupFlag)
+        {
+        	
+        	traversal = traversal.group().by(grpVar);
+        }
         System.out.println("=======================================================================");
         if (!query.isQueryResultStar()) 
         {
@@ -155,7 +186,6 @@ public class SparqlToGremlinCompiler extends OpVisitorBase
             	if(expr.toString().contains("SAMPLE"))
             	{
             		String str[] = expr.toString().split(" ");
-          
             	}
             }
             
@@ -255,6 +285,7 @@ public class SparqlToGremlinCompiler extends OpVisitorBase
     		st = allTraversals.remove(allTraversals.size()-1)+","+ st;
     		allTraversals.add(st);
     		
+    		
 
 //    		opFilter.getExprs().getList().stream().map(WhereTraversalBuilder::transform).reduce(traversal1, GraphTraversal::where);
     }
@@ -268,8 +299,8 @@ public class SparqlToGremlinCompiler extends OpVisitorBase
     	System.out.println("Traversal before Union:"+traversal.toString());	
 
       	
-    	String st1 = allTraversals.remove(allTraversals.size()-1);
-    	String st2 = allTraversals.remove(allTraversals.size()-1);
+//    	String st1 = allTraversals.remove(allTraversals.size()-1);
+//    	String st2 = allTraversals.remove(allTraversals.size()-1);
     	
     	Traversal unionTemp[] = new Traversal[2];
     	
@@ -282,10 +313,10 @@ public class SparqlToGremlinCompiler extends OpVisitorBase
     	}
     	
     	traversal = (GraphTraversal<Vertex, ?>)traversal.union(unionTemp);
-    //	tLst.add(__.union(unionTemp));
+    	tLst.add(__.union(unionTemp));
     	tLst.clear();
-    	String unionCombined = "UnionStep(["+st2+","+st1+"])";
-    	allTraversals.add(unionCombined);
+//    	String unionCombined = "UnionStep(["+st2+","+st1+"])";
+//    	allTraversals.add(unionCombined);
     	
 //    	if(filterFlag)
 //    	{
@@ -337,31 +368,57 @@ public class SparqlToGremlinCompiler extends OpVisitorBase
     public void visit(final OpTopN opTopN)
     {
     	System.out.println("The opTopN Visit called ==========================================");
+    	
+    	
+    	
+    	cntLimit = opTopN.getLimit();
+    	
     }
+    
     public void visit(final OpOrder opOrder)
     {
     	System.out.println("The opOrder Visit called ==========================================");
+    	String varb = "";
+    	String cond = "ASC";
     	for(SortCondition sc: opOrder.getConditions())
     	{
     		System.out.println("Conditions: "+sc.toString()+"\nExpr = "+sc.getExpression());
+    		sortDirec = sc.getDirection();
+    		sortvar = ""+sc.getExpression();
+    		System.out.println(sortvar+"   The Sorting  "+ sortDirec);
+    		sortvar = sortvar.replace("?", "");
+    		System.out.println(sortvar+"   The Sorting");
     		//traversal = traversal.order().by(sc.getExpression().toString(), Order.decr);
     		//traversal = traversal.order().by(sc.expression.toString(),Order.decr);sc.toString().substring(sc.toString().indexOf("C(")+2,sc.toString().length()-2)
     		//traversal = traversal.order().by(Order.incr);
     	}
     	//System.out.println("Traversal : "+traversal.toString());
-    	
+    	orderFlg = true;
     }
  
+
+    public void visit(final OpSlice opSlice)
+    {
+    	System.out.println("The opSlice Visit called ==========================================");
+    	System.out.println("The slice are: "+opSlice.getLength());
+    	limitflg = true;
+    	offsetLimit = opSlice.getLength();
+    	System.out.println(opSlice.getStart()+"The offset");
+    }
     public void visit(final OpGroup opGroup)
     {
+
     	System.out.println("The opGroup Visit called ==========================================");
     	 List<Var> lstVar = opGroup.getGroupVars().getVars();
+    	 
+    	 groupFlag = true;
          
          for(Var var: lstVar)
          {
          	System.out.println("The Var : "+var.toString());
-         	tLst.add(__.group().by(var.getName()));
+         	//tLst.add(__.group().by(var.getName()));
          	
+         	grpVar = var.getName();
 //         	if(expr.toString().contains("SAMPLE"))
 //         	{
 //         		String str[] = expr.toString().split(" ");
