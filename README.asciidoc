@@ -5,13 +5,15 @@ An effort towards converting sparql queries to gremlin traversals/queries. In th
 
 1. adding support for Union queries [Done]
 
-2. adding support for Order-By queries [Partial build]
+2. adding support for Order-By queries [Done]
 
-3. adding support for ASK queries [Pending]
+3. 2. adding support for Group-By queries [Done]
 
-4. Support translation for QALD 6 dataset (SPARQL queries over DBpedia) [TBA]
+4. adding support for ASK queries [Pending]
 
-5. Support translation for Northwind dataset [TBA]
+5. Support translation for QALD 6 dataset (SPARQL queries over DBpedia) [planned]
+
+6. Support translation for Northwind dataset [Partially]
 
 Note: The work is currently under progress
 
