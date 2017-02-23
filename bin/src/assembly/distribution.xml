@@ -1,0 +1,39 @@
+<assembly>
+    <id>distribution</id>
+    <formats>
+        <format>zip</format>
+    </formats>
+    <fileSets>
+        <fileSet>
+            <fileMode>0775</fileMode>
+            <directory>target/${project.artifactId}-${project.version}-standalone/bin</directory>
+            <outputDirectory>bin</outputDirectory>
+            <includes>
+                <include>*.sh</include>
+            </includes>
+        </fileSet>
+        <fileSet>
+            <directory>docs/images</directory>
+            <outputDirectory>docs/images</outputDirectory>
+        </fileSet>
+        <fileSet>
+            <directory>target/site/apidocs</directory>
+            <outputDirectory>javadocs</outputDirectory>
+        </fileSet>
+        <fileSet>
+            <directory>target/${project.artifactId}-${project.version}-standalone/lib</directory>
+            <outputDirectory>lib</outputDirectory>
+        </fileSet>
+    </fileSets>
+    <files>
+        <file>
+            <source>LICENSE</source>
+            <outputDirectory></outputDirectory>
+        </file>
+        <file>
+            <source>README.asciidoc</source>
+            <outputDirectory></outputDirectory>
+        </file>
+    </files>
+</assembly>
+

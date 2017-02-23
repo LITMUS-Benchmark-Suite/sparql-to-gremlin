@@ -1,0 +1,26 @@
+
+[1mSPARQL Query[0m
+
+  SELECT DISTINCT ?name
+  WHERE {
+      ?a e:created ?b .
+      ?a v:name ?name .
+  }
+
+
+[1mTraversal (prior execution)[0m
+
+  [GraphStep([],vertex), MatchStep(AND,[[MatchStartStep(a), VertexStep(OUT,[created],vertex), MatchEndStep(b)], [MatchStartStep(a), PropertiesStep([name],value), MatchEndStep(name)]]), DedupGlobalStep([name]), SelectOneStep(name)]
+
+
+[1mResult[0m
+
+  marko
+  josh
+  peter
+
+
+[1mTraversal (after execution)[0m
+
+  [TinkerGraphStep([],vertex), MatchStep([name],AND,[[MatchStartStep(a), VertexStep(OUT,[created],vertex), MatchEndStep(b)], [MatchStartStep(a), PropertiesStep([name],value), MatchEndStep(name)]]), SelectOneStep(name)]
+

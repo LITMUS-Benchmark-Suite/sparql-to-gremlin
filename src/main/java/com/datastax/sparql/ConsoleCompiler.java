@@ -19,7 +19,15 @@
 
 package com.datastax.sparql;
 
-import com.datastax.sparql.gremlin.SparqlToGremlinCompiler;
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.StringReader;
+import java.util.Map;
+import java.util.stream.Collectors;
+
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.DefaultParser;
@@ -32,15 +40,7 @@ import org.apache.tinkerpop.gremlin.structure.io.IoCore;
 import org.apache.tinkerpop.gremlin.tinkergraph.structure.TinkerFactory;
 import org.apache.tinkerpop.gremlin.tinkergraph.structure.TinkerGraph;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.StringReader;
-import java.util.Map;
-import java.util.stream.Collectors;
+import com.datastax.sparql.gremlin.SparqlToGremlinCompiler;
 
 class ConsoleCompiler {
 
@@ -79,7 +79,7 @@ class ConsoleCompiler {
 
         final String queryString = queryBuilder.toString();
         final Graph graph;
-
+        
         if (commandLine.hasOption("graph")) {
             switch (commandLine.getOptionValue("graph").toLowerCase()) {
                 case "classic":
@@ -87,13 +87,18 @@ class ConsoleCompiler {
                     break;
                 case "modern":
                     graph = TinkerFactory.createModern();
+                    System.out.println("Modern Graph Created");
                     break;
                 case "crew":
                     graph = TinkerFactory.createTheCrew();
                     break;
                 default:
                     graph = TinkerGraph.open();
+                    System.out.println("Graph Created");
+                    long startTime= System.nanoTime();
                     graph.io(IoCore.gryo()).readGraph(commandLine.getOptionValue("graph"));
+                    long endTime = System.nanoTime();
+                    System.out.println("Time taken to load graph from kyro file: "+ (endTime-startTime)/1000000+" mili seconds");
                     break;
             }
         } else {
@@ -106,6 +111,7 @@ class ConsoleCompiler {
         
         printWithHeadline("SPARQL Query", queryString);
         printWithHeadline("Traversal (prior execution)", traversal);
+  
         
         printWithHeadline("Result", String.join(System.lineSeparator(),traversal.toStream().map(Object::toString).collect(Collectors.toList())));
         printWithHeadline("Traversal (after execution)", traversal);

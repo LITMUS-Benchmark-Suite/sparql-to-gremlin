@@ -1,0 +1,219 @@
+
+An effort towards converting sparql queries to gremlin traversals/queries. In this work we started with an aim to extend the work by Daniel Kuppitz [https://github.com/dkuppitz/sparql-gremlin]; However, towards the end we landed up modifying the core and built it from almost scratch! But we like to give due credits for getting us started :)
+
+##The extentions are listed as follows:
+
+1. adding support for Union queries [Done]
+
+2. adding support for Order-By queries [Partial build]
+
+3. adding support for ASK queries [Pending]
+
+4. Support translation for QALD 6 dataset (SPARQL queries over DBpedia) [TBA]
+
+5. Support translation for Northwind dataset [TBA]
+
+Note: The work is currently under progress
+
+
+image::https://raw.githubusercontent.com/dkuppitz/sparql-gremlin/master/docs/images/sparql-gremlin-logo.png[SPARQL-Gremlin]
+
+SPARQL-Gremlin
+==============
+
+SPARQL-Gremlin is a compiler used to transform SPARQL queries into Gremlin traversals. It is based on the https://jena.apache.org/index.html[Apache Jena] SPARQL processor https://jena.apache.org/documentation/query/index.html[ARQ], which provides access to a syntax tree of a SPARQL query.
+
+The current version of SPARQL-Gremlin only uses a subset of the features provided by Apache Jena. The examples below show each implemented feature.
+
+Quick Start
+-----------
+
+Console Application
+~~~~~~~~~~~~~~~~~~~
+
+The project contains a console application that can be used to compile SPARQL queries and evaluate the resulting Gremlin traversals. For usage examples simply run `${PROJECT_HOME}/bin/sparql-gremlin.sh`.
+
+Gremlin Shell Plugin
+~~~~~~~~~~~~~~~~~~~~
+
+To use Gremlin-SPARQL as a Gremlin shell plugin, run the following commands (be sure `sparql-gremlin-xyz.jar` is in the classpath):
+
+[source]
+----
+gremlin> :install com.datastax sparql-gremlin 0.1
+==>Loaded: [com.datastax, sparql-gremlin, 0.1]
+gremlin> :plugin use datastax.sparql
+==>datastax.sparql activated
+----
+
+Once the plugin is installed and activated, establish a remote connection to execute SPARQL queries:
+
+[source]
+----
+gremlin> :remote connect datastax.sparql graph
+==>SPARQL[graphtraversalsource[tinkergraph[vertices:6 edges:6], standard]]
+gremlin> :> SELECT ?name ?age WHERE { ?person v:name ?name . ?person v:age ?age }
+==>[name:marko, age:29]
+==>[name:vadas, age:27]
+==>[name:josh, age:32]
+==>[name:peter, age:35]
+----
+
+Prefixes
+--------
+
+SPARQL-Gremlin supports the following prefixes to traverse the graph:
+
+[options="header"]
+|=================
+|Prefix      |Purpose
+|`e:<label>` |out-edge traversal
+|`p:<name>`  |property traversal
+|`v:<name>`  |property-value traversal
+|=================
+
+Note that element IDs and labels are treated like normal properties, hence they can be accessed using the same pattern:
+
+[source]
+----
+SELECT ?name ?id ?label WHERE { ?element v:name ?name . ?element v:id ?id . ?element v:label ?label }
+----
+
+Examples
+--------
+
+Select All
+~~~~~~~~~~
+
+.Select all vertices in the graph.
+[source,SPARQL]
+----
+SELECT * WHERE {
+}
+----
+
+Match Constant Values
+~~~~~~~~~~~~~~~~~~~~~
+
+.Select all vertices with the label `person`.
+[source,SPARQL]
+----
+SELECT * WHERE {
+  ?person v:label "person"
+}
+----
+
+Select Specific Elements
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+.Select the values of the properties `name` and `age` for each `person` vertex.
+[source,SPARQL]
+----
+SELECT ?name ?age
+WHERE {
+  ?person v:label "person" .
+  ?person v:name ?name .
+  ?person v:age ?age
+}
+----
+
+Pattern Matching
+~~~~~~~~~~~~~~~~
+
+.Select only those persons who created a project.
+[source,SPARQL]
+----
+SELECT ?name ?age
+WHERE {
+  ?person v:label "person" .
+  ?person v:name ?name .
+  ?person v:age ?age .
+  ?person e:created ?project
+}
+----
+
+Filtering
+~~~~~~~~~
+
+.Select only those persons who are older than 30.
+[source,SPARQL]
+----
+SELECT ?name ?age
+WHERE {
+  ?person v:label "person" .
+  ?person v:name ?name .
+  ?person v:age ?age .
+  ?person e:created ?project .
+    FILTER (?age > 30)
+}
+----
+
+Deduplication
+~~~~~~~~~~~~~
+
+.Select the distinct names of the created projects.
+[source,SPARQL]
+----
+SELECT DISTINCT ?name
+WHERE {
+  ?person v:label "person" .
+  ?person e:created ?project .
+  ?project v:name ?name .
+    FILTER (?age > 30)
+}
+----
+
+Multiple Filters
+~~~~~~~~~~~~~~~~
+
+.Select the distinct names of all Java projects.
+[source,SPARQL]
+----
+SELECT DISTINCT ?name
+WHERE {
+  ?person v:label "person" .
+  ?person e:created ?project .
+  ?project v:name ?name .
+  ?project v:lang ?lang .
+    FILTER (?age > 30 && ?lang == "java")
+}
+----
+
+Pattern Filter
+~~~~~~~~~~~~~~
+
+.A different way to filter all person who created a project.
+[source,SPARQL]
+----
+SELECT ?name
+WHERE {
+  ?person v:label "person" .
+  ?person v:name ?name .
+    FILTER EXISTS { ?person e:created ?project }
+}
+----
+
+.Filter all person who did not create a project.
+[source,SPARQL]
+----
+SELECT ?name
+WHERE {
+  ?person v:label "person" .
+  ?person v:name ?name .
+    FILTER NOT EXISTS { ?person e:created ?project }
+}
+----
+
+Meta-Property Access
+~~~~~~~~~~~~~~~~~~~~
+
+[source,SPARQL]
+----
+SELECT ?name ?startTime
+WHERE {
+  ?person v:name "daniel" .
+  ?person p:location ?location .
+  ?location v:value ?name .
+  ?location v:startTime ?startTime
+}
+----

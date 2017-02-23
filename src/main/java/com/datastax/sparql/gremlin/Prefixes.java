@@ -25,8 +25,8 @@ import java.util.List;
 
 public class Prefixes {
 
-	//public final static String BASE_URI = "http://northwind.com/";
-    public final static String BASE_URI = "http://www.tinkerpop.com/traversal/";
+	public final static String BASE_URI = "http://northwind.com/model/";
+   // public final static String BASE_URI = "http://www.tinkerpop.com/traversal/";
 
     final static List<String> PREFIXES = Arrays.asList("edge", "property", "value");
 
