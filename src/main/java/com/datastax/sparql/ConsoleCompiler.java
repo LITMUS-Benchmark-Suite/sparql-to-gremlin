@@ -113,6 +113,7 @@ class ConsoleCompiler {
         printWithHeadline("Traversal (prior execution)", traversal);
   
         
+        
         printWithHeadline("Result", String.join(System.lineSeparator(),traversal.toStream().map(Object::toString).collect(Collectors.toList())));
         printWithHeadline("Traversal (after execution)", traversal);
     }
