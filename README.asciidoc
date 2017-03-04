@@ -1,22 +1,26 @@
 
-An effort towards converting sparql queries to gremlin traversals/queries. In this work we started with an aim to extend the work by Daniel Kuppitz [https://github.com/dkuppitz/sparql-gremlin]; However, towards the end we landed up modifying the core and built it from almost scratch! But we like to give due credits for getting us started :)
+This is an continuous effort towards enabling automatic support for rxruting SPARQL queries over Graph systems via Gremlin query language by converting sparql queries to gremlin traversals/queries preserving its semantics. 
+In this work we started with an aim to extend the work by Daniel Kuppitz [https://github.com/dkuppitz/sparql-gremlin]; However, towards the end we landed up modifying the core and built it from almost scratch! But we like to give due credits for getting us started *three-cheers* :)
 
-##The extentions are listed as follows:
+This work is a sub-task of a bigger goal: LITMUS, an open extensible framework for benchmarking diverse data management solutions [https://arxiv.org/pdf/1608.02800.pdf]
 
-1. adding support for Union queries [Done]
+##The proposed extentions are listed as follows:
 
-2. adding support for Order-By queries [Done]
+1. enable support for Union queries [Done]
 
-3. 2. adding support for Group-By queries [Done]
+2. enable support for Order-By queries [Done-testing phase]
+
+3. enable support for Group-By queries [Done-testing phase]
 
 4. adding support for ASK queries [Pending]
 
-5. Support translation for QALD 6 dataset (SPARQL queries over DBpedia) [planned]
+5. enable support (translation) of QALD 6 dataset (SPARQL queries over DBpedia) [work in progress]
 
-6. Support translation for Northwind dataset [Partially]
+6. enable support (translation) for Northwind dataset (SPARQL queries over Northwind dataset [property-graph] ) [Done]
 
-Note: The work is currently under progress
+7. enable support for dataset independent query translation [work in progress] (This is allow a user to execute SPARQL queries over almost any dataset without being bothered about the internal mappings and configuration settings)
 
+Note: SPARQL-to-Gremlin work is currently under progress
 
 image::https://raw.githubusercontent.com/dkuppitz/sparql-gremlin/master/docs/images/sparql-gremlin-logo.png[SPARQL-Gremlin]
 
@@ -219,3 +223,33 @@ WHERE {
   ?location v:startTime ?startTime
 }
 ----
+
+Pattern Matching Union Queries
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.Select all persons who have developed a software in java using union.
+[source,SPARQL]
+----
+SELECT * WHERE {
+  {?person e:created ?software .}
+  UNION
+  {?software v:lang "java" .}
+}
+----
+
+Pattern Matching using Query modifier - Order By
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.Select all vertices with the label `person` and order by their age.
+[source,SPARQL]
+----
+SELECT * WHERE {
+  ?person v:label "person" .
+  ?person v:age ?age .
+} ORDER BY (?age)
+----
+
+Pattern Matching using Query modifier - Group By
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+TBA
