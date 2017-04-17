@@ -33,6 +33,7 @@ import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
+import org.apache.tinkerpop.gremlin.process.traversal.Bytecode;
 import org.apache.tinkerpop.gremlin.process.traversal.Traversal;
 import org.apache.tinkerpop.gremlin.structure.Graph;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
@@ -113,7 +114,7 @@ class ConsoleCompiler {
         printWithHeadline("Traversal (prior execution)", traversal);
   
         
-        
+        Bytecode traversalByteCode = traversal.asAdmin().getBytecode();
         printWithHeadline("Result", String.join(System.lineSeparator(),traversal.toStream().map(Object::toString).collect(Collectors.toList())));
         printWithHeadline("Traversal (after execution)", traversal);
     }
