@@ -8,13 +8,13 @@ This work is a sub-task of a bigger goal: LITMUS, an open extensible framework f
 
 1. enable support for Union queries [Done]
 
-2. enable support for Order-By queries [Done; in testing phase]
+2. enable support for Order-By queries [Done]
 
-3. enable support for Group-By queries [Done; in testing phase]
+3. enable support for Group-By queries [Done]
 
-4. enable support for LIMIT-OFFSET modifiers [Done; in testing phase]
+4. enable support for LIMIT-OFFSET modifiers [Done]
 
-5. adding support for ASK queries [Pending]
+5. adding support for ASK queries [Pending, Postponed temporarily]
 
 6. enable support (translation) of QALD 6 dataset (SPARQL queries over DBpedia) [work in progress]
 
