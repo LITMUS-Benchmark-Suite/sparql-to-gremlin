@@ -52,11 +52,6 @@ class WhereTraversalBuilder {
     }
 
     public static GraphTraversal<?, ?> transform(final E_LessThan expression) {
-    	// Printing intermediate filter values 
-    	System.out.println(" The less than Value: "+ __.as(expression.getArg1().getVarName()).inV());
-    	//System.out.println(" The less than Value: "+ __.as(expression.getArg1().getVarName()).value()); 
-    	//System.out.println(" The less than Value: "+ expression.getArg2().getConstant().getNode().getLiteralValue());
-    	//System.out.println(" The less than Value: "+ expression.getArg1().getVarName());
     	final Object value = expression.getArg2().getConstant().getNode().getLiteralValue();
         return __.as(expression.getArg1().getVarName()).is(P.lt(value));
     }
@@ -67,7 +62,6 @@ class WhereTraversalBuilder {
     }
 
     public static GraphTraversal<?, ?> transform(final E_GreaterThan expression) {
-    	System.out.println(" The Greater than Value: "+ __.as(expression.getArg1().getVarName()).inV());
         final Object value = expression.getArg2().getConstant().getNode().getLiteralValue();
         return __.as(expression.getArg1().getVarName()).is(P.gt(value));
     }
@@ -103,7 +97,6 @@ class WhereTraversalBuilder {
     public static GraphTraversal<?, ?> transform(final E_NotExists expression) {
         final OpBGP opBGP = (OpBGP) expression.getGraphPattern();
         final List<Triple> triples = opBGP.getPattern().getList();
-        System.out.println("Inside NotExist: "+triples.get(0).toString());
         if (triples.size() != 1) throw new IllegalStateException("Unhandled NOT EXISTS pattern");
         final GraphTraversal<?, ?> traversal = TraversalBuilder.transform(triples.get(0));
         final Step endStep = traversal.asAdmin().getEndStep();
