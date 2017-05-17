@@ -97,8 +97,12 @@ class ConsoleCompiler {
                 default:
                     graph = TinkerGraph.open();
                     System.out.println("Graph Created");
+                    String graphName = commandLine.getOptionValue("graph");
                     long startTime= System.nanoTime();
-                    graph.io(IoCore.gryo()).readGraph(commandLine.getOptionValue("graph"));
+                    if(graphName.endsWith(".graphml"))
+                    	graph.io(IoCore.graphml()).readGraph(graphName);
+                    else if(graphName.endsWith(".kryo")||graphName.endsWith("gryo"))
+                    	graph.io(IoCore.gryo()).readGraph(graphName);
                     long endTime = System.nanoTime();
                     System.out.println("Time taken to load graph from kyro file: "+ (endTime-startTime)/1000000+" mili seconds");
                     break;
