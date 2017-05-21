@@ -19,6 +19,7 @@
 
 package com.datastax.sparql.gremlin;
 
+import java.nio.file.OpenOption;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -111,40 +112,78 @@ public class SparqlToGremlinCompiler extends OpVisitorBase {
 		int traversalIndex = 0;
 		int numberOfTraversal = traversalList.size();
 		Traversal arrayOfAllTraversals[] = new Traversal[numberOfTraversal];
+		
+		if (query.hasOrderBy() && !query.hasGroupBy()) {
+			List<SortCondition> sortingConditions = query.getOrderBy();
+			int directionOfSort = 0;
+
+			for (SortCondition sortCondition : sortingConditions) {
+				Expr expr = sortCondition.getExpression();
+				directionOfSort = sortCondition.getDirection();
+				sortingVariable = expr.getVarName();
+
+			}
+
+			Order orderDirection = Order.incr;
+			if (directionOfSort == -1) {
+				orderDirection = Order.decr;
+			}
+		}
 		for (Traversal tempTrav : traversalList) {
 
 			arrayOfAllTraversals[traversalIndex++] = tempTrav;
-
-			if (traversalIndex == 1) {
-
-				if (query.hasOrderBy() && !query.hasGroupBy()) {
-					List<SortCondition> sortingConditions = query.getOrderBy();
-					int directionOfSort = 0;
-
-					for (SortCondition sortCondition : sortingConditions) {
-						Expr expr = sortCondition.getExpression();
-						directionOfSort = sortCondition.getDirection();
-						sortingVariable = expr.getVarName();
-
-					}
-
-					Order orderDirection = Order.incr;
-					if (directionOfSort == -1) {
-						orderDirection = Order.decr;
-					}
-					if (!query.hasGroupBy())
-						traversal = traversal.order().by(sortingVariable, orderDirection);
-					else {
-						traversal = traversal.order(Scope.local).by(sortingVariable, orderDirection);
-					}
-				}
-			}
+			System.out.println(tempTrav);
+//			if (traversalIndex == 1) {
+//
+//				if (query.hasOrderBy() && !query.hasGroupBy()) {
+//					List<SortCondition> sortingConditions = query.getOrderBy();
+//					int directionOfSort = 0;
+//
+//					for (SortCondition sortCondition : sortingConditions) {
+//						Expr expr = sortCondition.getExpression();
+//						directionOfSort = sortCondition.getDirection();
+//						sortingVariable = expr.getVarName();
+//
+//					}
+//
+//					Order orderDirection = Order.incr;
+//					if (directionOfSort == -1) {
+//						orderDirection = Order.decr;
+//					}
+//					if (!query.hasGroupBy())
+//						traversal = traversal.order(Scope.local).by(sortingVariable, orderDirection);
+//					else {
+//						traversal = traversal.order(Scope.local).by(sortingVariable, orderDirection);
+//					}
+//				}
+//			}
 		}
 
+		int directionOfSort = 0;
+		Order orderDirection = Order.incr;
+		if(query.hasOrderBy()){
+			List<SortCondition> sortingConditions = query.getOrderBy();
+			
+//
+			for (SortCondition sortCondition : sortingConditions) {
+				Expr expr = sortCondition.getExpression();
+				directionOfSort = sortCondition.getDirection();
+				sortingVariable = expr.getVarName();
+
+			}
+//
+			
+			if (directionOfSort == -1) {
+				orderDirection = Order.decr;
+			}
+			
+		}
+		
+		
 		if (traversalList.size() > 0)
 			traversal = traversal.match(arrayOfAllTraversals);
 
-
+		
 		if (!query.isQueryResultStar() && !query.hasGroupBy()) {
 
 			final List<String> vars = query.getResultVars();
@@ -158,13 +197,21 @@ public class SparqlToGremlinCompiler extends OpVisitorBase {
 				if (query.isDistinct()) {
 					traversal = traversal.dedup(vars.get(0));
 				}
-				traversal = traversal.select(vars.get(0));
+				if(query.hasOrderBy()){
+					traversal = traversal.order().by(__.select(vars.get(0)),orderDirection);
+				}
+				else
+					traversal = traversal.select(vars.get(0));
 				break;
 			case 2:
 				if (query.isDistinct()) {
 					traversal = traversal.dedup(vars.get(0), vars.get(1));
 				}
-				traversal = traversal.select(vars.get(0), vars.get(1));
+				if(query.hasOrderBy()){
+					traversal = traversal.order().by(__.select(vars.get(0)),orderDirection).by(__.select(vars.get(1)));
+				}
+				else
+					traversal = traversal.select(vars.get(0), vars.get(1));
 				break;
 			default:
 				final String[] all = new String[vars.size()];
@@ -173,7 +220,13 @@ public class SparqlToGremlinCompiler extends OpVisitorBase {
 					traversal = traversal.dedup(all);
 				}
 				final String[] others = Arrays.copyOfRange(all, 2, vars.size());
-				traversal = traversal.select(vars.get(0), vars.get(1), others);
+				if(query.hasOrderBy()){
+					
+					traversal = traversal.order().by(__.select(vars.get(0)),orderDirection).by(__.select(vars.get(1)));
+					
+				}
+				else					
+					traversal = traversal.select(vars.get(0), vars.get(1), others);
 
 				break;
 			}
@@ -185,6 +238,30 @@ public class SparqlToGremlinCompiler extends OpVisitorBase {
 			}
 		}
 
+
+//		if (query.hasOrderBy() && !query.hasGroupBy()) {
+//			List<SortCondition> sortingConditions = query.getOrderBy();
+//			int directionOfSort = 0;
+////
+//			for (SortCondition sortCondition : sortingConditions) {
+//				Expr expr = sortCondition.getExpression();
+//				directionOfSort = sortCondition.getDirection();
+//				sortingVariable = expr.getVarName();
+//
+//			}
+////
+//			Order orderDirection = Order.incr;
+//			if (directionOfSort == -1) {
+//				orderDirection = Order.decr;
+//			}
+//			if (!query.hasGroupBy())
+//				traversal = traversal.order().by(orderDirection );
+//			else {
+//				traversal = traversal.order(Scope.local).by(sortingVariable, orderDirection);
+//			}
+//		}
+		
+		
 		if (query.hasGroupBy()) {
 			VarExprList lstExpr = query.getGroupBy();
 			String grpVar = "";
@@ -192,6 +269,20 @@ public class SparqlToGremlinCompiler extends OpVisitorBase {
 			for (Var expr : lstExpr.getVars()) {
 				grpVar = expr.getName();
 				System.out.println("The Group by var: " + expr.getName());
+			}
+			
+			if (query.hasLimit()) {
+				long limit = query.getLimit(), offset = 0;
+
+				if (query.hasOffset()) {
+					offset = query.getOffset();
+
+				}
+				if (query.hasGroupBy() && query.hasOrderBy())
+					traversal = traversal.range( offset, offset + limit);
+				else
+					traversal = traversal.range(offset, offset + limit);
+
 			}
 
 			traversal = traversal.select(grpVar);
@@ -215,30 +306,30 @@ public class SparqlToGremlinCompiler extends OpVisitorBase {
 			}
 		}
 
-		if (query.hasOrderBy()) {
-			List<SortCondition> srtCond = query.getOrderBy();
-			int dir = 0;
+//		if (query.hasOrderBy()) {
+//			List<SortCondition> srtCond = query.getOrderBy();
+//			int dir = 0;
+//
+//			for (SortCondition sc : srtCond) {
+//				Expr expr = sc.getExpression();
+//				dir = sc.getDirection();
+//				sortingVariable = expr.getVarName();
+//			}
+//
+//			Order odrDir = Order.incr;
+//			if (dir == -1) {
+//				odrDir = Order.decr;
+//			}
+//			if (query.hasGroupBy()) {
+//
+//				if (dir == -1)
+//					traversal = traversal.order(Scope.local).by(Order.valueDecr);
+//				else
+//					traversal = traversal.order(Scope.local).by(Order.valueIncr);
+//			}
+//		}
 
-			for (SortCondition sc : srtCond) {
-				Expr expr = sc.getExpression();
-				dir = sc.getDirection();
-				sortingVariable = expr.getVarName();
-			}
-
-			Order odrDir = Order.incr;
-			if (dir == -1) {
-				odrDir = Order.decr;
-			}
-			if (query.hasGroupBy()) {
-
-				if (dir == -1)
-					traversal = traversal.order(Scope.local).by(Order.valueDecr);
-				else
-					traversal = traversal.order(Scope.local).by(Order.valueIncr);
-			}
-		}
-
-		if (query.hasLimit()) {
+		if (query.hasLimit() && !query.hasGroupBy() ) {
 			long limit = query.getLimit(), offset = 0;
 
 			if (query.hasOffset()) {
@@ -291,31 +382,59 @@ public class SparqlToGremlinCompiler extends OpVisitorBase {
 	public void visit(final OpFilter opFilter) {
 
 		Traversal traversal = null;
+		
+		
+		
 		for (Expr expr : opFilter.getExprs().getList()) {
-			traversal = ((GraphTraversal<Vertex, ?>) traversalList.remove(traversalList.size() - 1))
-					.where(WhereTraversalBuilder.transform(expr));
+			if(expr!=null){
+				
+			traversal = __.where(WhereTraversalBuilder.transform(expr));
+			traversalList.add(traversal);
+			}
 		}
-		traversalList.add(traversal);
+		
 	}
 	// TODO: add more functions for operators other than FILTER, such as
 	// OPTIONAL
 	// This can be done by understanding how Jena handles these other
 	// operators/filters inherently and then map them to Gremlin
+	
+	
+	public void visit(final OpLeftJoin opLeftJoin){
+		
+		System.out.println("Inside opOptional ---------------------------------------------->");
+		System.out.println(opLeftJoin.getRight().toString());
 
+	}
 	@Override
 	public void visit(final OpUnion opUnion) {
 
 		Traversal unionTemp[] = new Traversal[2];
-
-		unionTemp[1] = traversalList.remove(traversalList.size() - 1);
-		unionTemp[0] = traversalList.remove(traversalList.size() - 1);
-
-		for (Traversal temp : traversalList) {
-			traversal = traversal.match(temp);
+		Traversal unionTemp1[] = new Traversal[traversalList.size()/2];
+		Traversal unionTemp2[] = new Traversal[traversalList.size()/2];
+		
+		int count = 0;
+		
+		for(int i=0;i<traversalList.size();i++){
+			
+			if(i<traversalList.size()/2){
+				
+				unionTemp1[i] = traversalList.get(i);
+			}
+			else{
+				unionTemp2[count++] = traversalList.get(i);
+			}
 		}
+		
+		unionTemp[1] = __.match(unionTemp2);
+		unionTemp[0] = __.match(unionTemp1);
 
+		
+		
+		traversalList.clear();
 		traversal = (GraphTraversal<Vertex, ?>) traversal.union(unionTemp);
-		traversalList.add(__.union(unionTemp));
+	//	System.out.println("Getting out from Union -------------------> : "+traversal);
+	//	traversalList.add(__.union(unionTemp));
 	//	traversalList.clear();
 	}
 }

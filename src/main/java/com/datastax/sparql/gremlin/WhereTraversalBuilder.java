@@ -31,17 +31,20 @@ import org.apache.jena.sparql.expr.E_LogicalAnd;
 import org.apache.jena.sparql.expr.E_LogicalOr;
 import org.apache.jena.sparql.expr.E_NotEquals;
 import org.apache.jena.sparql.expr.E_NotExists;
+import org.apache.jena.sparql.expr.E_StrLength;
 import org.apache.jena.sparql.expr.Expr;
 import org.apache.tinkerpop.gremlin.process.traversal.P;
 import org.apache.tinkerpop.gremlin.process.traversal.Step;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversal;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.__;
+import org.hamcrest.core.IsInstanceOf;
 
 import java.util.List;
 
 class WhereTraversalBuilder {
 
     public static GraphTraversal<?, ?> transform(final E_Equals expression) {
+    //	System.out.println("The aggr one : "+expression.getArg1().getClass().getName() + "The aggr one :"+expression.getArg2().getClass().getName());
         final Object value = expression.getArg2().getConstant().getNode().getLiteralValue();
         return __.as(expression.getArg1().getVarName()).is(P.eq(value));
     }
@@ -52,11 +55,13 @@ class WhereTraversalBuilder {
     }
 
     public static GraphTraversal<?, ?> transform(final E_LessThan expression) {
+    //	System.out.println("The aggr one : "+expression.getArg1().getClass().getName() + "The aggr one :"+expression.getArg2().getClass().getName());
     	final Object value = expression.getArg2().getConstant().getNode().getLiteralValue();
         return __.as(expression.getArg1().getVarName()).is(P.lt(value));
     }
 
     public static GraphTraversal<?, ?> transform(final E_LessThanOrEqual expression) {
+    //	System.out.println("The aggr one : "+expression.getArg1().getClass().getName() + "The aggr one :"+expression.getArg2().getClass().getName());
         final Object value = expression.getArg2().getConstant().getNode().getLiteralValue();
         return __.as(expression.getArg1().getVarName()).is(P.lte(value));
     }
@@ -93,6 +98,7 @@ class WhereTraversalBuilder {
         endStep.removeLabel(label);
         return traversal;
     }
+    
 
     public static GraphTraversal<?, ?> transform(final E_NotExists expression) {
         final OpBGP opBGP = (OpBGP) expression.getGraphPattern();
@@ -104,6 +110,13 @@ class WhereTraversalBuilder {
         endStep.removeLabel(label);
         return __.not(traversal);
     }
+    
+    public static int getStrLength(final E_StrLength expression){
+    	
+    	return expression.getArg().toString().length();
+    	
+    }
+    
     
     //what does <?, ?> signify? possibly <S,E>
     public static GraphTraversal<?, ?> transform(final Expr expression) {
