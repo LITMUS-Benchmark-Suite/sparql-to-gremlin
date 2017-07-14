@@ -19,6 +19,8 @@
 
 package com.datastax.sparql.gremlin;
 
+import java.util.List;
+
 import org.apache.jena.graph.Triple;
 import org.apache.jena.sparql.algebra.op.OpBGP;
 import org.apache.jena.sparql.expr.E_Equals;
@@ -37,9 +39,6 @@ import org.apache.tinkerpop.gremlin.process.traversal.P;
 import org.apache.tinkerpop.gremlin.process.traversal.Step;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversal;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.__;
-import org.hamcrest.core.IsInstanceOf;
-
-import java.util.List;
 
 class WhereTraversalBuilder {
 
