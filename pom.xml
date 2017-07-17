@@ -28,14 +28,19 @@
     <version>0.2-SNAPSHOT</version>
     <name>SPARQL-Gremlin: Compiler for SPARQL to the Gremlin Traversal Machine</name>
     <organization>
-        <name>DataStax</name>
-        <url>http://www.datastax.com/</url>
+        <name>University of Bonn</name>
+        <url>http://sda.cs.uni-bonn.de/</url>
     </organization>
     <developers>
         <developer>
-            <name>Daniel Kuppitz</name>
-            <email>me@gremlin.guru</email>
-            <url>http://gremlin.guru</url>
+            <name>Harsh Thakkar</name>
+            <email>harsh9t@gmail.com</email>
+            <url>http://harshthakkar.in</url>
+        </developer>
+      <developer>
+            <name>Dharmen Punjani</name>
+            <email>dharmen.punjani@gmail.com</email>
+            <url>n/a</url>
         </developer>
     </developers>
 
