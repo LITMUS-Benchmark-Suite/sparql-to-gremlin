@@ -122,9 +122,9 @@ class ConsoleCompiler {
         Bytecode traversalByteCode = traversal.asAdmin().getBytecode();
         
         
-        //JavaTranslator.of(graph.traversal()).translate(traversalByteCode);
-        
-     //   System.out.println("the Byte Code : "+ traversalByteCode.toString());
+//        JavaTranslator.of(graph.traversal()).translate(traversalByteCode);
+//        
+//        System.out.println("the Byte Code : "+ traversalByteCode.toString());
         printWithHeadline("Result", String.join(System.lineSeparator(),JavaTranslator.of(graph.traversal()).translate(traversalByteCode).toStream().map(Object::toString).collect(Collectors.toList())));
         printWithHeadline("Traversal (after execution)", traversal);
     }
