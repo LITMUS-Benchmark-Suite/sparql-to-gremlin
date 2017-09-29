@@ -1,8 +1,9 @@
 
-This is an continuous effort towards enabling automatic support for executing SPARQL queries over Graph systems via Gremlin query language. This is achieved by converting sparql queries to gremlin traversals/queries preserving its semantics. 
-In this work we started with an aim to extend the work by Daniel Kuppitz [https://github.com/dkuppitz/sparql-gremlin]; However, towards the end we landed up modifying the core and built it from almost scratch! But we like to give due credits for getting us started *three-cheers* :)
+This is an continuous effort towards enabling automatic support for executing SPARQL queries over Graph systems via Gremlin query language. This is achieved by converting sparql queries to gremlin pattern matching traversals/queries. 
 
-This work is a sub-task of a bigger goal: LITMUS, an open extensible framework for benchmarking diverse data management solutions [https://arxiv.org/pdf/1608.02800.pdf]
+In this work we started with an aim to extend the work by Daniel Kuppitz [https://github.com/dkuppitz/sparql-gremlin]; We like to give due credits for getting us started *three-cheers* :)
+
+This work is a sub-task of a bigger goal: LITMUS, an open extensible framework for benchmarking diverse data management solutions Proposal - [https://arxiv.org/pdf/1608.02800.pdf] | First working prototype - [https://hub.docker.com/r/litmusbenchmarksuite/litmus/]
 
 ##The proposed extentions are listed as follows:
 
