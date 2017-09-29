@@ -112,8 +112,10 @@ class ConsoleCompiler {
             graph = TinkerFactory.createModern();
         }
 
+        long startTime = System.currentTimeMillis();
         final Traversal<Vertex, ?> traversal = SparqlToGremlinCompiler.convertToGremlinTraversal(graph, queryString);
-        
+        long endTime = System.currentTimeMillis();
+        System.out.println("Time traken to convert SPARQL to Gremlin Traversal : "+ (endTime - startTime)+ " miliseconds");
         
         printWithHeadline("SPARQL Query", queryString);
         printWithHeadline("Traversal (prior execution)", traversal);

@@ -94,7 +94,7 @@ public class SparqlToGremlinCompiler extends OpVisitorBase {
 	GraphTraversal<Vertex, ?> convertToGremlinTraversal(final Query query) {
 		final Op op = Algebra.compile(query); // SPARQL query compiles here to
 												// OP
-		System.out.println("OP Tree: " + op.toString());
+//		System.out.println("OP Tree: " + op.toString());
 
 		OpWalker.walk(op, this); // OP is being walked here
 
@@ -121,7 +121,7 @@ public class SparqlToGremlinCompiler extends OpVisitorBase {
 		for (Traversal tempTrav : traversalList) {
 
 			arrayOfAllTraversals[traversalIndex++] = tempTrav;
-			System.out.println(tempTrav);
+//			System.out.println(tempTrav);
 			// if (traversalIndex == 1) {
 			//
 			// if (query.hasOrderBy() && !query.hasGroupBy()) {
@@ -160,7 +160,7 @@ public class SparqlToGremlinCompiler extends OpVisitorBase {
 				Expr expr = sortCondition.getExpression();
 				directionOfSort = sortCondition.getDirection();
 				sortingVariable = expr.getVarName();
-
+//				System.out.println("order by var: "+sortingDirection);
 			}
 			//
 
@@ -182,12 +182,12 @@ public class SparqlToGremlinCompiler extends OpVisitorBase {
 				throw new IllegalStateException();
 			case 1:
 				if (query.isDistinct()) {
-					System.out.println("Inside ------------------- >Select 1------------------------> Distinct");
+//					System.out.println("Inside ------------------- >Select 1------------------------> Distinct");
 					traversal = traversal.dedup(vars.get(0));
 				}
 				if (query.hasOrderBy()) {
-					System.out.println("Inside ------------------- >Select 1");
-					traversal = traversal.order().by(__.select(vars.get(0)), orderDirection);
+//					System.out.println("Inside ------------------- >Select 1");
+					traversal = traversal.order().by(sortingVariable, orderDirection);
 				} else {
 
 					traversal = traversal.select(vars.get(0));
@@ -198,6 +198,7 @@ public class SparqlToGremlinCompiler extends OpVisitorBase {
 					traversal = traversal.dedup(vars.get(0), vars.get(1));
 				}
 				if (query.hasOrderBy()) {
+//					System.out.println("Inside ------------------- >Select 1");
 					traversal = traversal.order().by(__.select(vars.get(0)), orderDirection).by(__.select(vars.get(1)));
 				} else
 					traversal = traversal.select(vars.get(0), vars.get(1));
@@ -249,7 +250,7 @@ public class SparqlToGremlinCompiler extends OpVisitorBase {
 		// orderDirection);
 		// }
 		// }
-
+		
 		if (query.hasGroupBy()) {
 			VarExprList lstExpr = query.getGroupBy();
 			String grpVar = "";
@@ -279,8 +280,8 @@ public class SparqlToGremlinCompiler extends OpVisitorBase {
 				List<ExprAggregator> exprAgg = query.getAggregators();
 				for (ExprAggregator expr : exprAgg) {
 
-					System.out.println("The Aggregator by var: " + expr.getAggregator().getExprList().toString()
-							+ " is :" + expr.getAggregator().toString());
+//					System.out.println("The Aggregator by var: " + expr.getAggregator().getExprList().toString()
+//							+ " is :" + expr.getAggregator().toString());
 					if (expr.getAggregator().getName().contains("COUNT")) {
 						if (!query.toString().contains("GROUP")) {
 							if (expr.getAggregator().toString().contains("DISTINCT")) {
@@ -330,7 +331,7 @@ public class SparqlToGremlinCompiler extends OpVisitorBase {
 
 		if (query.hasOrderBy() && query.hasGroupBy()) {
 
-			traversal = traversal.order().by(vars.get(0), orderDirection);
+			traversal = traversal.order().by(sortingVariable, orderDirection);
 		}
 		if (query.hasLimit()) {
 			long limit = query.getLimit(), offset = 0;
@@ -401,8 +402,8 @@ public class SparqlToGremlinCompiler extends OpVisitorBase {
 
 	public void visit(final OpLeftJoin opLeftJoin) {
 
-		System.out.println("Inside opOptional ---------------------------------------------->");
-		System.out.println(opLeftJoin.getRight().toString());
+//		System.out.println("Inside opOptional ---------------------------------------------->");
+//		System.out.println(opLeftJoin.getRight().toString());
 
 	}
 
