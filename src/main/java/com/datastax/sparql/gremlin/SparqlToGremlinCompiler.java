@@ -92,12 +92,21 @@ public class SparqlToGremlinCompiler extends OpVisitorBase {
 	}
 
 	GraphTraversal<Vertex, ?> convertToGremlinTraversal(final Query query) {
+		
+		long startTime = System.currentTimeMillis();
+		long endTime;
 		final Op op = Algebra.compile(query); // SPARQL query compiles here to
 												// OP
 //		System.out.println("OP Tree: " + op.toString());
 
+		
 		OpWalker.walk(op, this); // OP is being walked here
-
+		
+		
+		
+		
+		//System.out.println("time taken for opWalker:"+ (endTime-startTime));
+		startTime = System.currentTimeMillis();
 		int traversalIndex = 0;
 		int numberOfTraversal = traversalList.size();
 		Traversal arrayOfAllTraversals[] = new Traversal[numberOfTraversal];
@@ -121,33 +130,6 @@ public class SparqlToGremlinCompiler extends OpVisitorBase {
 		for (Traversal tempTrav : traversalList) {
 
 			arrayOfAllTraversals[traversalIndex++] = tempTrav;
-//			System.out.println(tempTrav);
-			// if (traversalIndex == 1) {
-			//
-			// if (query.hasOrderBy() && !query.hasGroupBy()) {
-			// List<SortCondition> sortingConditions = query.getOrderBy();
-			// int directionOfSort = 0;
-			//
-			// for (SortCondition sortCondition : sortingConditions) {
-			// Expr expr = sortCondition.getExpression();
-			// directionOfSort = sortCondition.getDirection();
-			// sortingVariable = expr.getVarName();
-			//
-			// }
-			//
-			// Order orderDirection = Order.incr;
-			// if (directionOfSort == -1) {
-			// orderDirection = Order.decr;
-			// }
-			// if (!query.hasGroupBy())
-			// traversal = traversal.order(Scope.local).by(sortingVariable,
-			// orderDirection);
-			// else {
-			// traversal = traversal.order(Scope.local).by(sortingVariable,
-			// orderDirection);
-			// }
-			// }
-			// }
 		}
 
 		int directionOfSort = 0;
@@ -222,34 +204,7 @@ public class SparqlToGremlinCompiler extends OpVisitorBase {
 			}
 
 		}
-		// else {
-		//
-		// traversal =
-		// traversal.dedup(query.getProject().getVars().get(0).toString());
-		// }
-
-		// if (query.hasOrderBy() && !query.hasGroupBy()) {
-		// List<SortCondition> sortingConditions = query.getOrderBy();
-		// int directionOfSort = 0;
-		////
-		// for (SortCondition sortCondition : sortingConditions) {
-		// Expr expr = sortCondition.getExpression();
-		// directionOfSort = sortCondition.getDirection();
-		// sortingVariable = expr.getVarName();
-		//
-		// }
-		////
-		// Order orderDirection = Order.incr;
-		// if (directionOfSort == -1) {
-		// orderDirection = Order.decr;
-		// }
-		// if (!query.hasGroupBy())
-		// traversal = traversal.order().by(orderDirection );
-		// else {
-		// traversal = traversal.order(Scope.local).by(sortingVariable,
-		// orderDirection);
-		// }
-		// }
+		
 		
 		if (query.hasGroupBy()) {
 			VarExprList lstExpr = query.getGroupBy();
@@ -304,30 +259,10 @@ public class SparqlToGremlinCompiler extends OpVisitorBase {
 
 				traversal = traversal.group();
 			}
+			
+			
 		}
 
-		// if (query.hasOrderBy()) {
-		// List<SortCondition> srtCond = query.getOrderBy();
-		// int dir = 0;
-		//
-		// for (SortCondition sc : srtCond) {
-		// Expr expr = sc.getExpression();
-		// dir = sc.getDirection();
-		// sortingVariable = expr.getVarName();
-		// }
-		//
-		// Order odrDir = Order.incr;
-		// if (dir == -1) {
-		// odrDir = Order.decr;
-		// }
-		// if (query.hasGroupBy()) {
-		//
-		// if (dir == -1)
-		// traversal = traversal.order(Scope.local).by(Order.valueDecr);
-		// else
-		// traversal = traversal.order(Scope.local).by(Order.valueIncr);
-		// }
-		// }
 
 		if (query.hasOrderBy() && query.hasGroupBy()) {
 
@@ -346,6 +281,9 @@ public class SparqlToGremlinCompiler extends OpVisitorBase {
 				traversal = traversal.range(offset, offset + limit);
 
 		}
+		endTime = System.currentTimeMillis();
+		System.out.println("time taken for convertToGremlinTraversal Function : "+ (endTime-startTime)+" mili seconds");
+		
 		return traversal;
 	}
 
