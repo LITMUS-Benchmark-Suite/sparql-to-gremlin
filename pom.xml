@@ -93,6 +93,11 @@
             <version>${commons-io.version}</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+   			<groupId>org.apache.tinkerpop</groupId>
+   			<artifactId>spark-gremlin</artifactId>
+   			<version>3.3.0</version>
+		</dependency>
     </dependencies>
 
     <build>
