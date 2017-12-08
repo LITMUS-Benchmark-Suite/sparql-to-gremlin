@@ -65,6 +65,7 @@ class ConsoleCompiler {
             printHelp(1);
             return;
         }
+        
         final InputStream inputStream = commandLine.hasOption("file")
                 ? new FileInputStream(commandLine.getOptionValue("file"))
                 : System.in;
