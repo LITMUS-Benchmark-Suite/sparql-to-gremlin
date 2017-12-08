@@ -305,6 +305,8 @@ public class SparqlToGremlinCompiler extends OpVisitorBase {
 	@Override
 	public void visit(final OpBGP opBGP) {
 		{
+			
+			System.out.println("Inside opBGP ---------------------------------------------->");
 			final List<Triple> triples = opBGP.getPattern().getList();
 			final Traversal[] matchTraversals = new Traversal[triples.size()];
 			int i = 0;
@@ -322,6 +324,7 @@ public class SparqlToGremlinCompiler extends OpVisitorBase {
 	@Override
 	public void visit(final OpFilter opFilter) {
 
+		System.out.println("Inside opFilter ---------------------------------------------->");
 		Traversal traversal = null;
 
 		for (Expr expr : opFilter.getExprs().getList()) {
@@ -348,6 +351,7 @@ public class SparqlToGremlinCompiler extends OpVisitorBase {
 	@Override
 	public void visit(final OpUnion opUnion) {
 
+		System.out.println("Inside opUnion ---------------------------------------------->");
 		Traversal unionTemp[] = new Traversal[2];
 		Traversal unionTemp1[] = new Traversal[traversalList.size() / 2];
 		Traversal unionTemp2[] = new Traversal[traversalList.size() / 2];
