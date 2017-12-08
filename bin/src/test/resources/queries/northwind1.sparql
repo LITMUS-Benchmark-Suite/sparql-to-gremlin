@@ -1,0 +1,7 @@
+select distinct ?c ?b 
+where {   
+			?a v:label "product" . 
+			?a v:name ?c .
+			?a v:unitsInStock ?b. 
+			FILTER( ?b = 0).
+}   
