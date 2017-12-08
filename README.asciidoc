@@ -1,27 +1,29 @@
 
 This is an continuous effort towards enabling automatic support for executing SPARQL queries over Graph systems via Gremlin query language. This is achieved by converting sparql queries to gremlin pattern matching traversals/queries. 
 
-In this work we started with an aim to extend the work by Daniel Kuppitz [https://github.com/dkuppitz/sparql-gremlin]; We like to give due credits for getting us started *three-cheers* :)
+We would like to acknowledge Daniel Kupitz who laid the early foundation of work that follows. Many thanks getting us started *three-cheers* :)
 
 This work is a sub-task of a bigger goal: LITMUS, an open extensible framework for benchmarking diverse data management solutions Proposal - [https://arxiv.org/pdf/1608.02800.pdf] | First working prototype - [https://hub.docker.com/r/litmusbenchmarksuite/litmus/]
 
 ##The proposed extentions are listed as follows:
 
-1. enable support for Union queries [Done]
+1. enable support for Union queries [*Done*]
 
-2. enable support for Order-By queries [Done]
+2. enable support for Order-By queries [*Done*]
 
-3. enable support for Group-By queries [Done]
+3. enable support for Group-By queries [*Done*]
 
-4. enable support for LIMIT-OFFSET modifiers [Done]
+4. enable support for LIMIT-OFFSET modifiers [*Done*]
 
 5. adding support for ASK queries [Pending, Postponed temporarily]
 
-6. enable support (translation) of QALD 6 dataset (SPARQL queries over DBpedia) [work in progress]
+6. enable support (translation) for BSBM dataset [http://wifo5-03.informatik.uni-mannheim.de/bizer/berlinsparqlbenchmark/] (exeuting SPARQL queries over BSBM dataset [property-graph] ) [*Done*]
 
-7. enable support (translation) for Northwind dataset (SPARQL queries over Northwind dataset [property-graph] ) [Done]
+7. enable support (translation) for Northwind dataset (SPARQL queries over Northwind dataset [property-graph] ) [*Done*]
 
-8. enable support for dataset independent query translation [work in progress] (This is allow a user to execute SPARQL queries over almost any dataset without being bothered about the internal mappings and configuration settings)
+8. enable support for dataset independent query translation [_work in progress_] (This is allow a user to execute SPARQL queries over almost any dataset without being bothered about the internal mappings and configuration settings)
+
+9. enable support (translation) of QALD datasets (SPARQL queries over DBpedia) [_work in progress_]
 
 Note: SPARQL-to-Gremlin work is currently under progress
 
