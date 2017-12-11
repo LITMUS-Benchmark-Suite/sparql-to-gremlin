@@ -36,7 +36,6 @@ import org.apache.commons.cli.ParseException;
 import org.apache.tinkerpop.gremlin.jsr223.JavaTranslator;
 import org.apache.tinkerpop.gremlin.process.traversal.Bytecode;
 import org.apache.tinkerpop.gremlin.process.traversal.Traversal;
-import org.apache.tinkerpop.gremlin.spark.process.computer.SparkGraphComputer;
 import org.apache.tinkerpop.gremlin.structure.Graph;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
 import org.apache.tinkerpop.gremlin.structure.io.IoCore;
@@ -96,10 +95,6 @@ class ConsoleCompiler {
                 case "crew":
                     graph = TinkerFactory.createTheCrew();
                     break;
-                case "spark":
-                	graph = GraphFactory.open(commandLine.getOptionValue("graph"));
-                	graph.traversal().withComputer(SparkGraphComputer.class);
-                	break;
                 default:
                     graph = TinkerGraph.open();
                     System.out.println("Graph Created");

@@ -25,24 +25,49 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.datastax</groupId>
     <artifactId>sparql-gremlin</artifactId>
-    <version>0.2-SNAPSHOT</version>
+    <version>0.2</version>
     <name>SPARQL-Gremlin: Compiler for SPARQL to the Gremlin Traversal Machine</name>
+    <url>https://github.com/LITMUS-Benchmark-Suite/sparql-to-gremlin</url>
+    <licenses>
+    <license>
+     <name>The Apache Software License, Version 2.0</name>
+     <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+    </license>
+    </licenses>
     <organization>
-        <name>University of Bonn</name>
-        <url>http://sda.cs.uni-bonn.de/</url>
+        <name>WDAQUA-ITN</name>
+        <url>http://wdaqua.eu</url>
     </organization>
     <developers>
         <developer>
             <name>Harsh Thakkar</name>
             <email>harsh9t@gmail.com</email>
-            <url>http://harshthakkar.in</url>
+            <organization>University of Bonn</organization>
+            <organizationUrl>http://harshthakkar.in</organizationUrl>
         </developer>
       <developer>
             <name>Dharmen Punjani</name>
             <email>dharmen.punjani@gmail.com</email>
-            <url>n/a</url>
+            <organization>National and Kapodistrian University of Athens</organization>
+            <organizationUrl>http://wdaqua.eu/students/dharmen-punjani</organizationUrl>
         </developer>
     </developers>
+    <scm>
+    <connection>scm:git:git://github.com/LITMUS-Benchmark-Suite/sparql-to-gremlin.git</connection>
+    <developerConnection>scm:git:ssh://github.com/LITMUS-Benchmark-Suite/sparql-to-gremlin.git</developerConnection>
+    <url>http://github.com/LITMUS-Benchmark-Suite/sparql-to-gremlin/tree/master</url>
+    </scm>
+
+    <distributionManagement>
+	  <snapshotRepository>
+	   <id>ossrh</id>
+	   <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+	  </snapshotRepository>
+	  <repository>
+	   <id>ossrh</id>
+	   <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+	  </repository>
+	 </distributionManagement>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -93,11 +118,6 @@
             <version>${commons-io.version}</version>
             <scope>test</scope>
         </dependency>
-        <dependency>
-   			<groupId>org.apache.tinkerpop</groupId>
-   			<artifactId>spark-gremlin</artifactId>
-   			<version>3.3.0</version>
-		</dependency>
     </dependencies>
 
     <build>
@@ -108,8 +128,40 @@
                 <directory>${basedir}/src/main/resources
                 </directory>
             </resource>
-        </resources>    
+        </resources>
      <plugins>
+            <plugin>
+		    <groupId>org.apache.maven.plugins</groupId>
+		    <artifactId>maven-source-plugin</artifactId>
+		    <version>2.2.1</version>
+		    <executions>
+		     <execution>
+		      <id>attach-sources</id>
+		      <goals>
+		       <goal>jar-no-fork</goal>
+		      </goals>
+		     </execution>
+		    </executions>
+		   </plugin>
+		   <plugin>
+		        <groupId>org.apache.maven.plugins</groupId>
+		        <artifactId>maven-gpg-plugin</artifactId>
+		        <executions>
+		          <execution>
+		            <id>sign-artifacts</id>
+					<phase>verify</phase>
+		            <goals>
+		              <goal>sign</goal>
+		            </goals>
+		            <configuration>
+                <gpgArguments>
+                    <arg>--pinentry-mode</arg>
+                    <arg>loopback</arg>
+                </gpgArguments>
+            </configuration>
+		          </execution>
+		        </executions>
+      		</plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -200,6 +252,19 @@
                     <tarLongFileMode>warn</tarLongFileMode>
                 </configuration>
             </plugin>
+            <plugin>
+		    <groupId>org.apache.maven.plugins</groupId>
+		    <artifactId>maven-javadoc-plugin</artifactId>
+		    <version>2.9.1</version>
+		    <executions>
+		     <execution>
+		      <id>attach-javadocs</id>
+		      <goals>
+		       <goal>jar</goal>
+		      </goals>
+		     </execution>
+		    </executions>
+		   </plugin>
         </plugins>
     </build>
     <reporting>
