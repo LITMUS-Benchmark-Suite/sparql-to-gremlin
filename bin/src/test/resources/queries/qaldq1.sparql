@@ -1,7 +1,0 @@
-SELECT DISTINCT ?uri 
-WHERE {  
-	?uri <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://dbpedia.org/ontology/Astronaut> . 
-	{ ?uri <http://dbpedia.org/ontology/nationality> <http://dbpedia.org/resource/Russia> . } 
-	UNION 
-	{ ?uri <http://dbpedia.org/ontology/nationality> <http://dbpedia.org/resource/Soviet_Union> . } 
-} 

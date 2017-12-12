@@ -1,5 +1,0 @@
-SELECT ?name
-WHERE {
-    ?a v:name ?name .
-    FILTER NOT EXISTS { ?a v:age ?b }
-}

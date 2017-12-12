@@ -1,5 +1,0 @@
-SELECT DISTINCT ?a ?b ?c
-WHERE {
-    ?a e:created ?b .
-    ?a v:name ?c .
-}

@@ -1,5 +1,0 @@
-SELECT ?name ?age
-WHERE {
-    ?person v:name ?name .
-    ?person v:age ?age .
-}
