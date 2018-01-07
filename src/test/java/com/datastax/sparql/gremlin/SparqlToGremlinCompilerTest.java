@@ -19,8 +19,14 @@
 
 package com.datastax.sparql.gremlin;
 
+import java.io.IOException;
+
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
 import org.apache.tinkerpop.gremlin.structure.Graph;
+import org.apache.tinkerpop.gremlin.tinkergraph.structure.TinkerFactory;
+import org.junit.Before;
+import org.junit.Ignore;
+import org.junit.Test;
 
 public class SparqlToGremlinCompilerTest {
 
@@ -49,8 +55,8 @@ public class SparqlToGremlinCompilerTest {
     }
 
     /* Modern */
-/*
-    @Test
+
+  /*  @Test
     public void testModern1() throws Exception {
         final GraphTraversal expected = mg.V().match(
                 as("a").hasLabel("person"),
@@ -168,8 +174,8 @@ public class SparqlToGremlinCompilerTest {
     }
 
     /* The Crew */
-/*
-    @Test
+
+ /*   @Test
     public void testCrew1() throws Exception {
         final GraphTraversal expected = cg.V().match(
                 as("a").values("name").is("daniel"),
@@ -181,8 +187,8 @@ public class SparqlToGremlinCompilerTest {
     }
 
     /* Computer Mode */
-/*
-    @Test
+
+  /*  @Test
     public void testModernInComputerMode() throws Exception {
         final GraphTraversal expected = mc.V().match(
                 as("a").hasLabel("person"),

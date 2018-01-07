@@ -75,7 +75,7 @@
         <commons-io.version>2.4</commons-io.version>
         <jena.version>3.0.0</jena.version>
         <junit.version>4.12</junit.version>
-        <tinkerpop.version>3.2.3</tinkerpop.version>
+        <tinkerpop.version>3.2.7</tinkerpop.version>
         <query.dir>src/test/resources/sparql/queries</query.dir>
     </properties>
 

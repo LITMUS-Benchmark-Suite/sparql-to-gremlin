@@ -114,22 +114,25 @@ class ConsoleCompiler {
         }
 
         long startTime = System.currentTimeMillis();
-        final Traversal<Vertex, ?> traversal = SparqlToGremlinCompiler.convertToGremlinTraversal(graph, queryString);
+        Traversal<Vertex, ?> traversal = SparqlToGremlinCompiler.convertToGremlinTraversal(graph, queryString);
         long endTime = System.currentTimeMillis();
-        System.out.println("Time traken to convert SPARQL to Gremlin Traversal : "+ (endTime - startTime)+ " miliseconds");
+        System.out.println("Time taken to convert SPARQL to Gremlin Traversal : "+ (endTime - startTime)+ " miliseconds");
         
+        Traversal<Vertex, ?> traversalprofile = traversal;
         printWithHeadline("SPARQL Query", queryString);
         printWithHeadline("Traversal (prior execution)", traversal);
   
         
         Bytecode traversalByteCode = traversal.asAdmin().getBytecode();
-        
+       
+       // traversal = traversal.profile();
         
 //        JavaTranslator.of(graph.traversal()).translate(traversalByteCode);
 //        
 //        System.out.println("the Byte Code : "+ traversalByteCode.toString());
         printWithHeadline("Result", String.join(System.lineSeparator(),JavaTranslator.of(graph.traversal()).translate(traversalByteCode).toStream().map(Object::toString).collect(Collectors.toList())));
         printWithHeadline("Traversal (after execution)", traversal);
+        System.out.println("traversal profile : "+ traversal.profile().toList());
     }
 
     private static void printHelp(final int exitCode) throws IOException {

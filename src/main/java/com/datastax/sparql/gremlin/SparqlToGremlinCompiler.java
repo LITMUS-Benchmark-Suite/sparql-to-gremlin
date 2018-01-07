@@ -169,7 +169,8 @@ public class SparqlToGremlinCompiler extends OpVisitorBase {
 				}
 				if (query.hasOrderBy()) {
 //					System.out.println("Inside ------------------- >Select 1");
-					traversal = traversal.order().by(sortingVariable, orderDirection);
+					
+					traversal = traversal.order().by(__.select(vars.get(0)),orderDirection);
 				} else {
 
 					traversal = traversal.select(vars.get(0));
