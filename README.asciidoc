@@ -232,9 +232,10 @@ WHERE {
 ----
 
 Union Queries
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~
 
 .Select all persons who have developed a software in java using union.
+
 [source,SPARQL]
 ----
 SELECT * WHERE {
@@ -246,16 +247,17 @@ SELECT * WHERE {
 
 
  Optional Queries
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~
 
 coming soon
 
 
 
 Query modifier - Order By
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .Select all vertices with the label `person` and order them by their age.
+
 [source,SPARQL]
 ----
 SELECT * WHERE {
@@ -265,9 +267,10 @@ SELECT * WHERE {
 ----
 
 Query modifier - Group By
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .Select all vertices with the label `person` and group them by their age.
+[source,SPARQL]
 ----
 SELECT * WHERE {
   ?person v:label "person" .
@@ -277,22 +280,25 @@ SELECT * WHERE {
 
 
  SPARQL queries with Group By + Count
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-example coming soon
+.example coming soon.
+[source,SPARQL]
 
 
 
 SPARQL mixed/complex/aggregation-based queries 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-example coming soon
+.example coming soon.
+[source,SPARQL]
 
 
 SPARQL Star-shaped queries 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-example coming soon
+.example coming soon.
+[source,SPARQL]
 
 
 Limitations
@@ -300,6 +306,7 @@ Limitations
 
 1. Gremlinator currently only supports SPARQL 1.0 specification
 2. SPARQL queries with variables in the predicate position are not currently covered, with an exception of the following case:
+[source,SPARQL]
 ----
 SELECT * WHERE { ?x ?y ?z .}
 ----
