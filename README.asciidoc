@@ -275,7 +275,7 @@ Query modifier - Group By
 SELECT * WHERE {
   ?person v:label "person" .
   ?person v:age ?age .
-} ORDER BY (?age)
+} GROUP BY (?age)
 ----
 
 
@@ -295,7 +295,7 @@ SPARQL mixed/complex/aggregation-based queries
 
 
 SPARQL Star-shaped queries 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .example coming soon.
 [source,SPARQL]
@@ -306,9 +306,10 @@ Limitations
 
 1. Gremlinator currently only supports SPARQL 1.0 specification
 2. SPARQL queries with variables in the predicate position are not currently covered, with an exception of the following case:
+
 [source,SPARQL]
 ----
-SELECT * WHERE { ?x ?y ?z .}
+SELECT * WHERE { ?x ?y ?z . }
 ----
 
 
