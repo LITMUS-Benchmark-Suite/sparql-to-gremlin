@@ -3,7 +3,9 @@ This is an continuous effort towards enabling automatic support for executing SP
 
 We would like to acknowledge Daniel Kupitz who laid the early foundation of work that follows. Many thanks getting us started *three-cheers* :)
 
-This work is a sub-task of a bigger goal: LITMUS, an open extensible framework for benchmarking diverse data management solutions Proposal - [https://arxiv.org/pdf/1608.02800.pdf] | First working prototype - [https://hub.docker.com/r/litmusbenchmarksuite/litmus/]
+This work is a sub-task of a bigger goal: LITMUS, an open extensible framework for benchmarking diverse data management solutions Proposal - [https://arxiv.org/pdf/1608.02800.pdf] | conference paper - [https://dl.acm.org/citation.cfm?doid=3132218.3132232](_best research paper award_) | First working prototype - [https://hub.docker.com/r/litmusbenchmarksuite/litmus/]
+
+The foundation research work on Gremlinator can be accessed from - [https://arxiv.org/pdf/1801.02911.pdf] | A simple  demonstration of Gremlinator can be accessed from - [http://gremlinator.iai.uni-bonn.de:8080/Demo/] | A short video tutorial on how to use the demonstration can be accessed from - [https://www.youtube.com/watch?v=Z0ETx2IBamw] 
 
 ##The proposed extentions are listed as follows:
 
@@ -25,7 +27,7 @@ This work is a sub-task of a bigger goal: LITMUS, an open extensible framework f
 
 9. enable support (translation) of QALD datasets (SPARQL queries over DBpedia) [_work in progress_]
 
-Note: SPARQL-to-Gremlin work is currently under progress
+Note: SPARQL-to-Gremlin work is currently under progress, however we currently support translation of the SPARQL 1.0 specification
 
 image::https://raw.githubusercontent.com/dkuppitz/sparql-gremlin/master/docs/images/sparql-gremlin-logo.png[SPARQL-Gremlin]
 
@@ -229,7 +231,7 @@ WHERE {
 }
 ----
 
-Pattern Matching Union Queries
+Union Queries
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .Select all persons who have developed a software in java using union.
@@ -242,10 +244,18 @@ SELECT * WHERE {
 }
 ----
 
-Pattern Matching using Query modifier - Order By
+
+ Optional Queries
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-.Select all vertices with the label `person` and order by their age.
+coming soon
+
+
+
+Query modifier - Order By
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.Select all vertices with the label `person` and order them by their age.
 [source,SPARQL]
 ----
 SELECT * WHERE {
@@ -254,7 +264,49 @@ SELECT * WHERE {
 } ORDER BY (?age)
 ----
 
-Pattern Matching using Query modifier - Group By
+Query modifier - Group By
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-TBA
+.Select all vertices with the label `person` and group them by their age.
+----
+SELECT * WHERE {
+  ?person v:label "person" .
+  ?person v:age ?age .
+} ORDER BY (?age)
+----
+
+
+ SPARQL queries with Group By + Count
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+example coming soon
+
+
+
+SPARQL mixed/complex/aggregation-based queries 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+example coming soon
+
+
+SPARQL Star-shaped queries 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+example coming soon
+
+
+Limitations
+-----------
+
+1. Gremlinator currently only supports SPARQL 1.0 specification
+2. SPARQL queries with variables in the predicate position are not currently covered, with an exception of the following case:
+----
+SELECT * WHERE { ?x ?y ?z .}
+----
+
+
+Future work
+-----------
+1. cover all cases of SPARQL queries with variables in predicate position
+2. cover SPARQL 1.1 specification (such as Property Paths)
+
