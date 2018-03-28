@@ -20,22 +20,24 @@ The current version of SPARQL-Gremlin only uses a subset of the features provide
 4. [Future work](#future-work-)
 5. [Acknowledgements](#acknowledgements-)
 
-## Introduction <a name="introduction"></a>
+## Introduction <a me="introduction"></a>
 This is an continuous effort towards enabling automatic support for executing SPARQL queries over Graph systems via Gremlin query language. This is achieved by converting SPARQL queries to Gremlin pattern matching traversals.
 
 ### Goal <a name="goal"></a>
+The goal of this work is to bridge the query interoperability gap between the two famous, yet fairly disconnected, graph communities: Semantic Web (which relies on the RDF data model) and Graph database (which relies on Property graphs).
+
 The *Gremlinator* work is a sub-task of a bigger goal: LITMUS, an open extensible framework for benchmarking diverse data management solutions. Further information can be obtained from the following resources:
   1. Proposal - [ESWC 2017 Ph.D. Symposium](https://arxiv.org/pdf/1608.02800.pdf "LITMUS Proposal")
   2. Publication - [Semantics 2017 R&D paper](https://dl.acm.org/citation.cfm?doid=3132218.3132232 "LITMUS Benchmark Suite") (_best research & innovation paper award_)
   3. First working prototype - [Docker](https://hub.docker.com/r/litmusbenchmarksuite/litmus/)
 
-The foundational research work on Gremlinator can be found from - [Gremlinator full paper](https://arxiv.org/pdf/1801.02911.pdf "SWJ submission")
+The foundational research work on Gremlinator can be found from - [Gremlinator full paper](https://arxiv.org/pdf/1801.02911.pdf "SWJ submission"). In this paper, we present and discuss the notion of graph query language semantics of SPARQL and Gremlin, and a formal mapping between SPARQL pattern matching graph patterns and Gremlin traversals.
 Furthermore, we point the interested reader to the following resourcesfor a better understanding:
   1. Gremlinator demonstration - ([Public Demo Mirror 1](http://gremlinator.iai.uni-bonn.de:8080/Demo/ "Gremlinator demonstration")) and ([Public Demo Mirror 2](http://195.201.31.31:8080/Demo/ "Gremlinator demonstration"))
   2. A short video tutorial on how to use the demonstration - [Video tutorial](https://www.youtube.com/watch?v=Z0ETx2IBamw "video tutorial")
 
 ### Supported Queries <a name="#supported-queries"></a>
-*Gremlinator* is currently na on-going effort with an aim to cover the entire SPARQL 1.1 query spectrum,
+*Gremlinator* is currently an on-going effort with an aim to cover the entire SPARQL 1.1 query spectrum,
 however we currently support translation of the SPARQL 1.0 specification, especially *SELECT* queries.
 The supported SPARQL query types are:
 * Union
