@@ -58,9 +58,11 @@ class TraversalBuilder {
                         ? traversal.hasId(object.getLiteralValue())
                         : traversal.id().as(object.getName());
             case "label":
+            	
                 return object.isConcrete()
                         ? traversal.hasLabel(object.getLiteralValue().toString())
                         : traversal.label().as(object.getName());
+            	
             case "key":
                 return object.isConcrete()
                         ? traversal.hasKey(object.getLiteralValue().toString())

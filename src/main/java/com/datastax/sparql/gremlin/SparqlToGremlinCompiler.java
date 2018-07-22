@@ -19,6 +19,7 @@
 
 package com.datastax.sparql.gremlin;
 
+import java.nio.file.OpenOption;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -49,12 +50,20 @@ import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.__;
 import org.apache.tinkerpop.gremlin.structure.Graph;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
 
+import groovy.json.internal.ValueMap;
+import groovy.json.internal.ValueMapImpl;
+
 // TODO: implement OpVisitor, don't extend OpVisitorBase
 public class SparqlToGremlinCompiler extends OpVisitorBase {
 
 	private GraphTraversal<Vertex, ?> traversal;
+	private GraphTraversal<Vertex, ?> optTraversal;
 
 	List<Traversal> traversalList = new ArrayList<Traversal>();
+	List<Traversal> optionalTraversals = new ArrayList<Traversal>();
+	List<String> optionalVariable = new ArrayList<String>(); 
+	
+	boolean optionalFlag = false;
 
 	String groupVariable = "";
 	int sortingDirection = 0;
@@ -92,25 +101,27 @@ public class SparqlToGremlinCompiler extends OpVisitorBase {
 	}
 
 	GraphTraversal<Vertex, ?> convertToGremlinTraversal(final Query query) {
-		
+
 		long startTime = System.currentTimeMillis();
 		long endTime;
 		final Op op = Algebra.compile(query); // SPARQL query compiles here to
 												// OP
-//		System.out.println("OP Tree: " + op.toString());
+		// System.out.println("OP Tree: " + op.toString());
 
-		
 		OpWalker.walk(op, this); // OP is being walked here
-		
-		
-		
-		
-		//System.out.println("time taken for opWalker:"+ (endTime-startTime));
+
+		// System.out.println("time taken for opWalker:"+ (endTime-startTime));
 		startTime = System.currentTimeMillis();
 		int traversalIndex = 0;
 		int numberOfTraversal = traversalList.size();
-		Traversal arrayOfAllTraversals[] = new Traversal[numberOfTraversal];
-
+		int numberOfOptionalTraversal = optionalTraversals.size();
+		Traversal arrayOfAllTraversals[] = null;
+		if (numberOfOptionalTraversal > 0) {
+			arrayOfAllTraversals = new Traversal[numberOfTraversal - numberOfOptionalTraversal + 1];
+		} else {
+			arrayOfAllTraversals = new Traversal[numberOfTraversal - numberOfOptionalTraversal];
+		}
+		Traversal arrayOfOptionalTraversals[] = new Traversal[numberOfOptionalTraversal];
 		if (query.hasOrderBy() && !query.hasGroupBy()) {
 			List<SortCondition> sortingConditions = query.getOrderBy();
 			int directionOfSort = 0;
@@ -127,9 +138,16 @@ public class SparqlToGremlinCompiler extends OpVisitorBase {
 				orderDirection = Order.decr;
 			}
 		}
-		for (Traversal tempTrav : traversalList) {
+		for (int i = 0; i < arrayOfAllTraversals.length; i++) {
 
-			arrayOfAllTraversals[traversalIndex++] = tempTrav;
+			arrayOfAllTraversals[i] = traversalList.get(i);
+		}
+		traversalIndex = 0;
+		for (Traversal tempTrav : optionalTraversals) {
+
+			arrayOfOptionalTraversals[traversalIndex++] = tempTrav;
+			// System.out.println("The optional traversal here : " +
+			// arrayOfOptionalTraversals[traversalIndex - 1]);
 		}
 
 		int directionOfSort = 0;
@@ -142,7 +160,7 @@ public class SparqlToGremlinCompiler extends OpVisitorBase {
 				Expr expr = sortCondition.getExpression();
 				directionOfSort = sortCondition.getDirection();
 				sortingVariable = expr.getVarName();
-//				System.out.println("order by var: "+sortingDirection);
+				// System.out.println("order by var: "+sortingDirection);
 			}
 			//
 
@@ -152,8 +170,19 @@ public class SparqlToGremlinCompiler extends OpVisitorBase {
 
 		}
 
-		if (traversalList.size() > 0)
+		if (traversalList.size() > 0) {
 			traversal = traversal.match(arrayOfAllTraversals);
+		}
+		if (optionalTraversals.size() > 0) {
+			System.out.println("The optional travesal : " + optionalTraversals + "size of array : "
+					+ arrayOfOptionalTraversals.length);
+			// GraphTraversal<Vertex, ?> traversalTemp = null;
+			// traversalTemp = traversalTemp.match(arrayOfOptionalTraversals);
+			traversal = traversal.coalesce(__.match(arrayOfOptionalTraversals), (Traversal) __.constant("N/A"));
+			for (int i = 0; i < optionalVariable.size(); i++) {
+				traversal = traversal.as(optionalVariable.get(i).substring(1));
+			}
+		}
 
 		final List<String> vars = query.getResultVars();
 		List<ExprAggregator> lstexpr = query.getAggregators();
@@ -164,13 +193,15 @@ public class SparqlToGremlinCompiler extends OpVisitorBase {
 				throw new IllegalStateException();
 			case 1:
 				if (query.isDistinct()) {
-//					System.out.println("Inside ------------------- >Select 1------------------------> Distinct");
+					// System.out.println("Inside ------------------- >Select
+					// 1------------------------> Distinct");
 					traversal = traversal.dedup(vars.get(0));
 				}
 				if (query.hasOrderBy()) {
-//					System.out.println("Inside ------------------- >Select 1");
-					
-					traversal = traversal.order().by(__.select(vars.get(0)),orderDirection);
+					// System.out.println("Inside ------------------- >Select
+					// 1");
+
+					traversal = traversal.order().by(__.select(vars.get(0)), orderDirection);
 				} else {
 
 					traversal = traversal.select(vars.get(0));
@@ -181,7 +212,8 @@ public class SparqlToGremlinCompiler extends OpVisitorBase {
 					traversal = traversal.dedup(vars.get(0), vars.get(1));
 				}
 				if (query.hasOrderBy()) {
-//					System.out.println("Inside ------------------- >Select 1");
+					// System.out.println("Inside ------------------- >Select
+					// 1");
 					traversal = traversal.order().by(__.select(vars.get(0)), orderDirection).by(__.select(vars.get(1)));
 				} else
 					traversal = traversal.select(vars.get(0), vars.get(1));
@@ -203,10 +235,9 @@ public class SparqlToGremlinCompiler extends OpVisitorBase {
 
 				break;
 			}
-
+			
 		}
-		
-		
+
 		if (query.hasGroupBy()) {
 			VarExprList lstExpr = query.getGroupBy();
 			String grpVar = "";
@@ -236,8 +267,9 @@ public class SparqlToGremlinCompiler extends OpVisitorBase {
 				List<ExprAggregator> exprAgg = query.getAggregators();
 				for (ExprAggregator expr : exprAgg) {
 
-//					System.out.println("The Aggregator by var: " + expr.getAggregator().getExprList().toString()
-//							+ " is :" + expr.getAggregator().toString());
+					// System.out.println("The Aggregator by var: " +
+					// expr.getAggregator().getExprList().toString()
+					// + " is :" + expr.getAggregator().toString());
 					if (expr.getAggregator().getName().contains("COUNT")) {
 						if (!query.toString().contains("GROUP")) {
 							if (expr.getAggregator().toString().contains("DISTINCT")) {
@@ -260,10 +292,8 @@ public class SparqlToGremlinCompiler extends OpVisitorBase {
 
 				traversal = traversal.group();
 			}
-			
-			
-		}
 
+		}
 
 		if (query.hasOrderBy() && query.hasGroupBy()) {
 
@@ -283,8 +313,9 @@ public class SparqlToGremlinCompiler extends OpVisitorBase {
 
 		}
 		endTime = System.currentTimeMillis();
-		System.out.println("time taken for convertToGremlinTraversal Function : "+ (endTime-startTime)+" mili seconds");
-		
+		System.out.println(
+				"time taken for convertToGremlinTraversal Function : " + (endTime - startTime) + " mili seconds");
+
 		return traversal;
 	}
 
@@ -294,7 +325,10 @@ public class SparqlToGremlinCompiler extends OpVisitorBase {
 	}
 
 	public static GraphTraversal<Vertex, ?> convertToGremlinTraversal(final Graph graph, final String query) {
-		return convertToGremlinTraversal(graph.traversal(),	QueryFactory.create(Prefixes.prepend(query)));
+
+		if (query.contains("?x") && query.contains("?y") && query.contains("?z"))
+			return graph.traversal().V().outE().inV().path().by(__.valueMap());
+		return convertToGremlinTraversal(graph.traversal(), QueryFactory.create(Prefixes.prepend(query)));
 	}
 
 	public static GraphTraversal<Vertex, ?> convertToGremlinTraversal(final GraphTraversalSource g,
@@ -306,7 +340,7 @@ public class SparqlToGremlinCompiler extends OpVisitorBase {
 	@Override
 	public void visit(final OpBGP opBGP) {
 		{
-			
+
 			System.out.println("Inside opBGP ---------------------------------------------->");
 			final List<Triple> triples = opBGP.getPattern().getList();
 			final Traversal[] matchTraversals = new Traversal[triples.size()];
@@ -314,7 +348,14 @@ public class SparqlToGremlinCompiler extends OpVisitorBase {
 			for (final Triple triple : triples) {
 
 				matchTraversals[i++] = TraversalBuilder.transform(triple);
-				traversalList.add(matchTraversals[i - 1]);
+				if (optionalFlag) {
+					optionalTraversals.add(matchTraversals[i - 1]);
+					optionalVariable.add(triple.getObject().toString());
+					System.out.println("Inside Optional traversal==========================");
+				} else {
+					traversalList.add(matchTraversals[i - 1]);
+					System.out.println("Inside regular traversal==========================");
+				}
 			}
 
 		}
@@ -327,10 +368,8 @@ public class SparqlToGremlinCompiler extends OpVisitorBase {
 
 		System.out.println("Inside opFilter ---------------------------------------------->");
 		Traversal traversal = null;
-
 		for (Expr expr : opFilter.getExprs().getList()) {
 			if (expr != null) {
-
 				traversal = __.where(WhereTraversalBuilder.transform(expr));
 				traversalList.add(traversal);
 			}
@@ -344,9 +383,30 @@ public class SparqlToGremlinCompiler extends OpVisitorBase {
 
 	public void visit(final OpLeftJoin opLeftJoin) {
 
-//		System.out.println("Inside opOptional ---------------------------------------------->");
-//		System.out.println(opLeftJoin.getRight().toString());
+		System.out.println("Inside opOptional ---------------------------------------------->");
+		// System.out.println(opLeftJoin.getRight().toString());
 
+		System.out.println("Printing:========" + opLeftJoin.getRight().toString() + " ===== " + opLeftJoin.getExprs());
+		optionalFlag = true;
+
+		optionalVisit(opLeftJoin.getRight());
+		if (opLeftJoin.getExprs() != null) {
+			for (Expr expr : opLeftJoin.getExprs().getList()) {
+				if (expr != null) {
+					optTraversal = __.where(WhereTraversalBuilder.transform(expr));
+					System.out.println("Visiting optional filter=============");
+					if (optionalFlag)
+						optionalTraversals.add(optTraversal);
+				}
+			}
+		}
+		// OpWalker.walk(opLeftJoin.getRight(), this);
+		// visit(opLeftJoin);
+	}
+
+	public void optionalVisit(final Op op) {
+
+		OpWalker.walk(op, this);
 	}
 
 	@Override
@@ -354,29 +414,56 @@ public class SparqlToGremlinCompiler extends OpVisitorBase {
 
 		System.out.println("Inside opUnion ---------------------------------------------->");
 		Traversal unionTemp[] = new Traversal[2];
-		Traversal unionTemp1[] = new Traversal[traversalList.size() / 2];
-		Traversal unionTemp2[] = new Traversal[traversalList.size() / 2];
 
-		int count = 0;
+		if (optionalFlag) {
+			// Traversal unionTemp1[] = new Traversal[optionalTraversals.size()
+			// / 2];
+			// Traversal unionTemp2[] = new Traversal[optionalTraversals.size()
+			// / 2];
+			//
+			// int count = 0;
+			//
+			// for (int i = 0; i < optionalTraversals.size(); i++) {
+			//
+			// if (i < optionalTraversals.size() / 2) {
+			//
+			// unionTemp1[i] = optionalTraversals.get(i);
+			// } else {
+			// unionTemp2[count++] = optionalTraversals.get(i);
+			// }
+			// }
+			//
+			// unionTemp[1] = __.match(unionTemp2);
+			// unionTemp[0] = __.match(unionTemp1);
+			//
+			// optionalTraversals.clear();
+			// traversal = (GraphTraversal<Vertex, ?>)
+			// traversal.union(unionTemp);
+		} else {
+			Traversal unionTemp1[] = new Traversal[traversalList.size() / 2];
+			Traversal unionTemp2[] = new Traversal[traversalList.size() / 2];
 
-		for (int i = 0; i < traversalList.size(); i++) {
+			int count = 0;
 
-			if (i < traversalList.size() / 2) {
+			for (int i = 0; i < traversalList.size(); i++) {
 
-				unionTemp1[i] = traversalList.get(i);
-			} else {
-				unionTemp2[count++] = traversalList.get(i);
+				if (i < traversalList.size() / 2) {
+
+					unionTemp1[i] = traversalList.get(i);
+				} else {
+					unionTemp2[count++] = traversalList.get(i);
+				}
 			}
+
+			unionTemp[1] = __.match(unionTemp2);
+			unionTemp[0] = __.match(unionTemp1);
+
+			traversalList.clear();
+			traversal = (GraphTraversal<Vertex, ?>) traversal.union(unionTemp);
+			// System.out.println("Getting out from Union -------------------> :
+			// "+traversal);
+			// traversalList.add(__.union(unionTemp));
+			// traversalList.clear();
 		}
-
-		unionTemp[1] = __.match(unionTemp2);
-		unionTemp[0] = __.match(unionTemp1);
-
-		traversalList.clear();
-		traversal = (GraphTraversal<Vertex, ?>) traversal.union(unionTemp);
-		// System.out.println("Getting out from Union -------------------> :
-		// "+traversal);
-		// traversalList.add(__.union(unionTemp));
-		// traversalList.clear();
 	}
 }
