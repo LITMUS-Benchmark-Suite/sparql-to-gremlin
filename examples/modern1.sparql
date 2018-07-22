@@ -1,0 +1,7 @@
+SELECT ?name ?fname ?age WHERE {
+ 
+  ?person v:name ?name .
+  ?person e:knows ?friend .
+  ?friend v:name ?fname .
+  OPTIONAL { ?friend v:age ?age . FILTER (?age > 30) . } 
+} 

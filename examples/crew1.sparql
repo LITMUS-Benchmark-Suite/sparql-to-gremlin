@@ -1,0 +1,7 @@
+SELECT ?c ?d
+WHERE {
+  ?a v:name "daniel" .
+  ?a p:location ?b .
+  ?b v:value ?c .
+  ?b v:startTime ?d .
+}
