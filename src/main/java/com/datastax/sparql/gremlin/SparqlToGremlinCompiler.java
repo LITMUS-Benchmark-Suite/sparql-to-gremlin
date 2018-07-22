@@ -183,7 +183,7 @@ public class SparqlToGremlinCompiler extends OpVisitorBase {
 				traversal = traversal.as(optionalVariable.get(i).substring(1));
 			}
 		}
-
+		//comment
 		final List<String> vars = query.getResultVars();
 		List<ExprAggregator> lstexpr = query.getAggregators();
 		if (!query.isQueryResultStar() && !query.hasGroupBy()) {
