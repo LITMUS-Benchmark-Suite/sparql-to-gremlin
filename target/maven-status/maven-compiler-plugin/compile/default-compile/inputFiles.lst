@@ -1,6 +1,6 @@
-/home/dharmen/sparql-to-gremlin/src/main/java/com/datastax/sparql/gremlin/Prefixes.java
-/home/dharmen/sparql-to-gremlin/src/main/java/com/datastax/sparql/gremlin/SparqlToGremlinCompiler.java
-/home/dharmen/sparql-to-gremlin/src/main/java/com/datastax/sparql/gremlin/Runable.java
-/home/dharmen/sparql-to-gremlin/src/main/java/com/datastax/sparql/gremlin/TraversalBuilder.java
-/home/dharmen/sparql-to-gremlin/src/main/java/com/datastax/sparql/gremlin/WhereTraversalBuilder.java
-/home/dharmen/sparql-to-gremlin/src/main/java/com/datastax/sparql/ConsoleCompiler.java
+/Users/harshthakkar/github/sparql-gremlin-latest/sparql-to-gremlin/src/main/java/com/datastax/sparql/gremlin/TraversalBuilder.java
+/Users/harshthakkar/github/sparql-gremlin-latest/sparql-to-gremlin/src/main/java/com/datastax/sparql/gremlin/Prefixes.java
+/Users/harshthakkar/github/sparql-gremlin-latest/sparql-to-gremlin/src/main/java/com/datastax/sparql/ConsoleCompiler.java
+/Users/harshthakkar/github/sparql-gremlin-latest/sparql-to-gremlin/src/main/java/com/datastax/sparql/gremlin/Runable.java
+/Users/harshthakkar/github/sparql-gremlin-latest/sparql-to-gremlin/src/main/java/com/datastax/sparql/gremlin/WhereTraversalBuilder.java
+/Users/harshthakkar/github/sparql-gremlin-latest/sparql-to-gremlin/src/main/java/com/datastax/sparql/gremlin/SparqlToGremlinCompiler.java

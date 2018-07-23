@@ -75,7 +75,7 @@
         <commons-io.version>2.4</commons-io.version>
         <jena.version>3.0.0</jena.version>
         <junit.version>4.12</junit.version>
-        <tinkerpop.version>3.2.7</tinkerpop.version>
+        <tinkerpop.version>3.3.3</tinkerpop.version>
         <query.dir>src/test/resources/sparql/queries</query.dir>
     </properties>
 
@@ -143,7 +143,7 @@
 		     </execution>
 		    </executions>
 		   </plugin>
-		   <plugin>
+<!--		   <plugin>
 		        <groupId>org.apache.maven.plugins</groupId>
 		        <artifactId>maven-gpg-plugin</artifactId>
 		        <executions>
@@ -155,35 +155,35 @@
 		            </goals>
 		            <configuration>
                 <gpgArguments>
-                    <arg>--pinentry-mode</arg>
+                    <arg>&#45;&#45;pinentry-mode</arg>
                     <arg>loopback</arg>
                 </gpgArguments>
             </configuration>
 		          </execution>
 		        </executions>
-      		</plugin>
-<!--             <plugin> -->
-<!--                 <groupId>org.apache.maven.plugins</groupId> -->
-<!--                 <artifactId>maven-compiler-plugin</artifactId> -->
-<!--                 <version>3.3</version> -->
-<!--                 <configuration> -->
-<!--                     <source>1.8</source> -->
-<!--                     <target>1.8</target> -->
-<!--                 </configuration> -->
-<!--             </plugin> -->
-<!--             <plugin> -->
-<!--                 <artifactId>maven-jar-plugin</artifactId> -->
-<!--                 <version>2.6</version> -->
-<!--                 <configuration> -->
-<!--                     <archive> -->
-<!--                         <manifest> -->
-<!--                             <addClasspath>true</addClasspath> -->
-<!--                             <classpathPrefix>lib/</classpathPrefix> -->
-<!--                             <mainClass>com.datastax.sparql.ConsoleCompiler</mainClass> -->
-<!--                         </manifest> -->
-<!--                     </archive> -->
-<!--                 </configuration> -->
-<!--             </plugin> -->
+		</plugin>-->
+             <plugin>
+                 <groupId>org.apache.maven.plugins</groupId>
+                 <artifactId>maven-compiler-plugin</artifactId>
+                 <version>3.3</version>
+                 <configuration>
+                     <source>1.8</source>
+                     <target>1.8</target>
+                 </configuration>
+             </plugin>
+             <plugin>
+                 <artifactId>maven-jar-plugin</artifactId>
+                 <version>2.6</version>
+                 <configuration>
+                     <archive>
+                         <manifest>
+                             <addClasspath>true</addClasspath>
+                             <classpathPrefix>lib/</classpathPrefix>
+                             <mainClass>com.datastax.sparql.ConsoleCompiler</mainClass>
+                         </manifest>
+                     </archive>
+                 </configuration>
+             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-dependency-plugin</artifactId>

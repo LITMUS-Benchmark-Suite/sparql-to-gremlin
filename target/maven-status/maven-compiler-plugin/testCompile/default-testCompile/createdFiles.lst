@@ -1,0 +1,3 @@
+com/datastax/sparql/ResourceHelper.class
+com/datastax/sparql/gremlin/SparqlToGremlinCompilerTest.class
+com/datastax/sparql/gremlin/PrefixesTest.class

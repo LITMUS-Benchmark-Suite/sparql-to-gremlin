@@ -1,0 +1,6 @@
+com/datastax/sparql/gremlin/Runable.class
+com/datastax/sparql/gremlin/SparqlToGremlinCompiler.class
+com/datastax/sparql/gremlin/Prefixes.class
+com/datastax/sparql/ConsoleCompiler.class
+com/datastax/sparql/gremlin/TraversalBuilder.class
+com/datastax/sparql/gremlin/WhereTraversalBuilder.class

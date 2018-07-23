@@ -31,7 +31,7 @@
             <outputDirectory></outputDirectory>
         </file>
         <file>
-            <source>README.asciidoc</source>
+            <source>README.md</source>
             <outputDirectory></outputDirectory>
         </file>
     </files>
