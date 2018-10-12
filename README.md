@@ -55,7 +55,7 @@ The supported SPARQL query types are:
 The current implementation of *Gremlinator* (i.e. SPARQL-Gremlin) does not support the following:
 * SPARQL queries with variables in the predicate position are not currently covered, with an exception of the following case:
 ```sparql
-SELECT * WHERE { ?x ?y ?z . }
+SELECT ?x WHERE { ?x ?y ?z . }
 ```
 * A SPARQL Union query with un-balanced patterns, i.e. a gremlin union traversal can only be generated if the unput SPARQL query has the same number of patterns on both the side of the union operator. For instance, the following SPARQL query cannot be mapped using Gremlinator, since a union is executed between different number of graph patterns (two patterns *union* 1 pattern).
 ```sparql
