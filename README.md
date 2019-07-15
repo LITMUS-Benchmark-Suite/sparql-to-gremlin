@@ -51,7 +51,7 @@ The supported SPARQL query types are:
     * LIMIT
     * OFFSET
 
-### Limitations <a name="limitations"></a>
+### Limitations <a name="limitations"></a> (*Fixed)
 The current implementation of *Gremlinator* (i.e. SPARQL-Gremlin) does not support the following:
 * SPARQL queries with variables in the predicate position are not currently covered, with an exception of the following case:
 ```sparql
