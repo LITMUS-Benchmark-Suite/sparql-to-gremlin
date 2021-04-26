@@ -72,7 +72,7 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <commons-cli.version>1.3.1</commons-cli.version>
-        <commons-io.version>2.4</commons-io.version>
+        <commons-io.version>2.7</commons-io.version>
         <jena.version>3.0.0</jena.version>
         <junit.version>4.12</junit.version>
         <tinkerpop.version>3.3.3</tinkerpop.version>
